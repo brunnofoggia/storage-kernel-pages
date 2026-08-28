@@ -260,6 +260,7 @@ li strong { color: var(--cream); font-weight: 500; }
   color: var(--cream-dim);
   font: italic 400 1.125rem/1.6 var(--serif);
 }
+.note strong { color: var(--cream); font-weight: 500; }
 
 /* Dense reference sections borrow the two-column prose/code row. */
 .row {
