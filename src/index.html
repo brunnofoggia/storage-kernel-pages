@@ -81,7 +81,7 @@
           <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
           <span data-c="py">python</span><span data-c="ts">typescript</span>
         </div>
-        <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> StorageLocation, StoragePath
+        <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> StorageLocation
 <span class="k">from</span> storage_kernel.factory <span class="k">import</span> (
     CreateStorageClientConfig,
     <span class="f">create_storage_client</span>,
@@ -96,12 +96,8 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     )
 )
 
-<span class="k">await</span> storage.<span class="f">send_content</span>(
-    StoragePath(<span class="s">"2026/summary.csv"</span>), <span class="s">"id,total\n1,42\n"</span>
-)
-content = <span class="k">await</span> storage.<span class="f">read_content</span>(
-    StoragePath(<span class="s">"2026/summary.csv"</span>)
-)
+<span class="k">await</span> storage.<span class="f">send_content</span>(<span class="s">"2026/summary.csv"</span>, <span class="s">"id,total\n1,42\n"</span>)
+content = <span class="k">await</span> storage.<span class="f">read_content</span>(<span class="s">"2026/summary.csv"</span>)
 <span class="c"># app-files/reports/2026/summary.csv</span>
 <span class="k">await</span> storage.<span class="f">close</span>()</pre>
         <pre data-c="ts"><span class="k">import</span> { <span class="f">createStorageClient</span> } <span class="k">from</span> <span class="s">'@storage-kernel/factory'</span>;
@@ -112,12 +108,10 @@ content = <span class="k">await</span> storage.<span class="f">read_content</spa
 });
 
 <span class="k">await</span> storage.<span class="f">sendContent</span>(
-  { path: <span class="s">'2026/summary.csv'</span> },
+  <span class="s">'2026/summary.csv'</span>,
   <span class="s">'id,total\n1,42\n'</span>,
 );
-<span class="k">const</span> content = <span class="k">await</span> storage.<span class="f">readContent</span>({
-  path: <span class="s">'2026/summary.csv'</span>,
-});
+<span class="k">const</span> content = <span class="k">await</span> storage.<span class="f">readContent</span>(<span class="s">'2026/summary.csv'</span>);
 <span class="c">// app-files/reports/2026/summary.csv</span>
 <span class="k">await</span> storage.<span class="f">close</span>();</pre>
       </div>
@@ -252,7 +246,7 @@ content = <span class="k">await</span> storage.<span class="f">read_content</spa
             <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
             <span data-c="py">local-filesystem</span><span data-c="ts">local-filesystem</span>
           </div>
-          <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> StorageLocation, StoragePath
+          <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> StorageLocation
 <span class="k">from</span> storage_kernel.factory <span class="k">import</span> (
     CreateStorageClientConfig,
     <span class="f">create_storage_client</span>,
@@ -265,12 +259,8 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     )
 )
 
-<span class="k">await</span> storage.<span class="f">send_content</span>(
-    StoragePath(<span class="s">"notes/today.txt"</span>), <span class="s">"hello"</span>
-)
-text = <span class="k">await</span> storage.<span class="f">read_content</span>(
-    StoragePath(<span class="s">"notes/today.txt"</span>)
-)
+<span class="k">await</span> storage.<span class="f">send_content</span>(<span class="s">"notes/today.txt"</span>, <span class="s">"hello"</span>)
+text = <span class="k">await</span> storage.<span class="f">read_content</span>(<span class="s">"notes/today.txt"</span>)
 <span class="c"># ./var/storage/notes/today.txt</span></pre>
           <pre data-c="ts"><span class="k">import</span> { <span class="f">createStorageClient</span> } <span class="k">from</span> <span class="s">'@storage-kernel/factory'</span>;
 
@@ -280,12 +270,10 @@ text = <span class="k">await</span> storage.<span class="f">read_content</span>(
 });
 
 <span class="k">await</span> storage.<span class="f">sendContent</span>(
-  { path: <span class="s">'notes/today.txt'</span> },
+  <span class="s">'notes/today.txt'</span>,
   <span class="s">'hello'</span>,
 );
-<span class="k">const</span> text = <span class="k">await</span> storage.<span class="f">readContent</span>({
-  path: <span class="s">'notes/today.txt'</span>,
-});
+<span class="k">const</span> text = <span class="k">await</span> storage.<span class="f">readContent</span>(<span class="s">'notes/today.txt'</span>);
 <span class="c">// ./var/storage/notes/today.txt</span></pre>
         </div>
       </div>
@@ -331,9 +319,7 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     )
 )
 
-<span class="k">await</span> storage.<span class="f">send_binary</span>(
-    StoragePath(<span class="s">"2026/summary.csv"</span>), payload
-)
+<span class="k">await</span> storage.<span class="f">send_binary</span>(<span class="s">"2026/summary.csv"</span>, payload)
 <span class="c"># app-files/reports/2026/summary.csv</span></pre>
           <pre data-c="ts"><span class="k">const</span> storage = <span class="k">await</span> <span class="f">createStorageClient</span>({
   providerName: <span class="s">'aws-s3'</span>,
@@ -342,7 +328,7 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
 });
 
 <span class="k">await</span> storage.<span class="f">sendBinary</span>(
-  { path: <span class="s">'2026/summary.csv'</span> },
+  <span class="s">'2026/summary.csv'</span>,
   payload,
 );
 <span class="c">// app-files/reports/2026/summary.csv</span></pre>
@@ -353,15 +339,17 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     <div class="col notice">
       <h3 data-l="en">What the registries serve today</h3>
       <h3 data-l="pt">O que os registries entregam hoje</h3>
-      <p data-l="en">The library is mid-release, and the install lines above are ahead of it. Checked against the registries, not the repositories:</p>
-      <p data-l="pt">A biblioteca está no meio de um release, e as linhas de instalação acima estão à frente dele. Verificado contra os registries, não contra os repositórios:</p>
+      <p data-l="en">The library is mid-release. This page follows the current tags, which run ahead of both registries — so read this before copying anything above. Checked against the registries, not the repositories:</p>
+      <p data-l="pt">A biblioteca está no meio de um release. Esta página acompanha as tags atuais, que estão à frente dos dois registries — então leia isto antes de copiar qualquer coisa acima. Verificado contra os registries, não contra os repositórios:</p>
       <ul data-l="en">
-        <li>PyPI serves <code>storage-kernel-contracts</code>, <code>storage-kernel-core</code> and <code>storage-kernel-factory</code> at <code>0.1.0a1</code>. The four provider distributions and <code>storage-kernel-testing</code> are not there yet, so a provider <code>uv add</code> will not resolve until they are.</li>
-        <li>npm has nothing under <code>@storage-kernel</code>. The TypeScript side is tagged at <code>0.1.0-alpha.1</code> and the samples on this page match that tag; the <code>npm install</code> lines do not work yet.</li>
+        <li><strong>The samples here are <code>0.1.0a2</code> and <code>0.1.0-alpha.2</code>, where a path is a plain string.</strong> PyPI serves <code>0.1.0a1</code>, where every operation took a <code>StoragePath</code> wrapper instead — so installed today, the calls above need that wrapper back. The changelog says what changed.</li>
+        <li>PyPI is being filled in. The base distributions and the S3 provider are there; the GCP, local-filesystem and SFTP providers and <code>storage-kernel-testing</code> are not yet, so a <code>uv add</code> for one of those will not resolve until it is.</li>
+        <li>npm has nothing under <code>@storage-kernel</code> at all, so none of the <code>npm install</code> lines work yet.</li>
       </ul>
       <ul data-l="pt">
-        <li>O PyPI entrega <code>storage-kernel-contracts</code>, <code>storage-kernel-core</code> e <code>storage-kernel-factory</code> na <code>0.1.0a1</code>. As quatro distribuições de provider e o <code>storage-kernel-testing</code> ainda não estão lá, então um <code>uv add</code> de provider não resolve enquanto não estiverem.</li>
-        <li>O npm não tem nada sob <code>@storage-kernel</code>. O lado TypeScript está tagueado na <code>0.1.0-alpha.1</code> e os exemplos desta página conferem com essa tag; as linhas <code>npm install</code> ainda não funcionam.</li>
+        <li><strong>Os exemplos aqui são da <code>0.1.0a2</code> e da <code>0.1.0-alpha.2</code>, onde um path é uma string simples.</strong> O PyPI entrega a <code>0.1.0a1</code>, em que toda operação recebia um wrapper <code>StoragePath</code> — então instalado hoje, as chamadas acima precisam desse wrapper de volta. O changelog diz o que mudou.</li>
+        <li>O PyPI está sendo preenchido. As distribuições base e o provider S3 já estão lá; os providers de GCP, filesystem local e SFTP e o <code>storage-kernel-testing</code> ainda não, então um <code>uv add</code> de um desses não resolve enquanto não estiver.</li>
+        <li>O npm não tem absolutamente nada sob <code>@storage-kernel</code>, então nenhuma das linhas <code>npm install</code> funciona ainda.</li>
       </ul>
     </div>
   </section>
@@ -418,8 +406,8 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
           <tr>
             <td><code>path</code></td>
             <td data-l="en">all four</td><td data-l="pt">os quatro</td>
-            <td data-l="en">What the call asks for. Always <code>/</code> separated, whatever the platform underneath.</td>
-            <td data-l="pt">O que a chamada pede. Sempre separado por <code>/</code>, seja qual for a plataforma embaixo.</td>
+            <td data-l="en">What the call asks for, as a plain string. Always <code>/</code> separated, whatever the platform underneath.</td>
+            <td data-l="pt">O que a chamada pede, como string simples. Sempre separado por <code>/</code>, seja qual for a plataforma embaixo.</td>
           </tr>
         </tbody>
       </table>
@@ -450,7 +438,7 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
 <span class="c"># archive/reports/2026/summary.csv — another bucket,</span>
 <span class="c"># and the prefix comes from this location, not the client's</span>
 <span class="k">await</span> storage.<span class="f">read_binary</span>(
-    StoragePath(<span class="s">"2026/summary.csv"</span>),
+    <span class="s">"2026/summary.csv"</span>,
     StorageOperationOptions(
         location=StorageLocation(
             bucket=<span class="s">"archive"</span>, prefix=<span class="s">"reports"</span>
@@ -459,16 +447,16 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
 )
 
 <span class="c"># rejected: StorageInvalidPathError</span>
-<span class="k">await</span> storage.<span class="f">read_binary</span>(StoragePath(<span class="s">"../etc/passwd"</span>))</pre>
+<span class="k">await</span> storage.<span class="f">read_binary</span>(<span class="s">"../etc/passwd"</span>)</pre>
         <pre data-c="ts"><span class="c">// archive/reports/2026/summary.csv — another bucket,</span>
 <span class="c">// and the prefix comes from this location, not the client's</span>
 <span class="k">await</span> storage.<span class="f">readBinary</span>(
-  { path: <span class="s">'2026/summary.csv'</span> },
+  <span class="s">'2026/summary.csv'</span>,
   { location: { bucket: <span class="s">'archive'</span>, prefix: <span class="s">'reports'</span> } },
 );
 
 <span class="c">// rejected: StorageInvalidPathError</span>
-<span class="k">await</span> storage.<span class="f">readBinary</span>({ path: <span class="s">'../etc/passwd'</span> });</pre>
+<span class="k">await</span> storage.<span class="f">readBinary</span>(<span class="s">'../etc/passwd'</span>);</pre>
       </div>
     </div>
   </section>
@@ -505,7 +493,7 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
         <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> SendContentOptions
 
 <span class="k">await</span> storage.<span class="f">send_content</span>(
-    StoragePath(<span class="s">"docs/readme.md"</span>),
+    <span class="s">"docs/readme.md"</span>,
     <span class="s">"# Hello"</span>,
     SendContentOptions(
         content_type=<span class="s">"text/markdown"</span>,
@@ -513,24 +501,16 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     ),
 )
 
-text = <span class="k">await</span> storage.<span class="f">read_content</span>(
-    StoragePath(<span class="s">"docs/readme.md"</span>)
-)
-data = <span class="k">await</span> storage.<span class="f">read_binary</span>(
-    StoragePath(<span class="s">"images/avatar.png"</span>)
-)</pre>
+text = <span class="k">await</span> storage.<span class="f">read_content</span>(<span class="s">"docs/readme.md"</span>)
+data = <span class="k">await</span> storage.<span class="f">read_binary</span>(<span class="s">"images/avatar.png"</span>)</pre>
         <pre data-c="ts"><span class="k">await</span> storage.<span class="f">sendContent</span>(
-  { path: <span class="s">'docs/readme.md'</span> },
+  <span class="s">'docs/readme.md'</span>,
   <span class="s">'# Hello'</span>,
   { contentType: <span class="s">'text/markdown'</span>, overwrite: <span class="n">false</span> },
 );
 
-<span class="k">const</span> text = <span class="k">await</span> storage.<span class="f">readContent</span>({
-  path: <span class="s">'docs/readme.md'</span>,
-});
-<span class="k">const</span> data = <span class="k">await</span> storage.<span class="f">readBinary</span>({
-  path: <span class="s">'images/avatar.png'</span>,
-});</pre>
+<span class="k">const</span> text = <span class="k">await</span> storage.<span class="f">readContent</span>(<span class="s">'docs/readme.md'</span>);
+<span class="k">const</span> data = <span class="k">await</span> storage.<span class="f">readBinary</span>(<span class="s">'images/avatar.png'</span>);</pre>
       </div>
     </div>
 
@@ -552,15 +532,11 @@ data = <span class="k">await</span> storage.<span class="f">read_binary</span>(
           <span data-l="en">streaming both ways</span><span data-l="pt">stream nos dois sentidos</span>
         </div>
         <pre data-c="py"><span class="c"># read without holding the file in memory</span>
-<span class="k">async for</span> chunk <span class="k">in await</span> storage.<span class="f">read_stream</span>(
-    StoragePath(<span class="s">"archive/2026.zip"</span>)
-):
+<span class="k">async for</span> chunk <span class="k">in await</span> storage.<span class="f">read_stream</span>(<span class="s">"archive/2026.zip"</span>):
     <span class="f">process</span>(chunk)
 
 <span class="c"># write progressively; end() commits, abort() discards</span>
-upload = <span class="k">await</span> storage.<span class="f">create_upload_stream</span>(
-    StoragePath(<span class="s">"logs/app.ndjson"</span>)
-)
+upload = <span class="k">await</span> storage.<span class="f">create_upload_stream</span>(<span class="s">"logs/app.ndjson"</span>)
 <span class="k">try</span>:
     <span class="k">for</span> event <span class="k">in</span> events:
         <span class="k">await</span> upload.<span class="f">write_text_line</span>(json.<span class="f">dumps</span>(event))
@@ -569,16 +545,12 @@ upload = <span class="k">await</span> storage.<span class="f">create_upload_stre
     <span class="k">await</span> upload.<span class="f">abort</span>()
     <span class="k">raise</span></pre>
         <pre data-c="ts"><span class="c">// read without holding the file in memory</span>
-<span class="k">for await</span> (<span class="k">const</span> chunk <span class="k">of</span> <span class="k">await</span> storage.<span class="f">readStream</span>({
-  path: <span class="s">'archive/2026.zip'</span>,
-})) {
+<span class="k">for await</span> (<span class="k">const</span> chunk <span class="k">of</span> <span class="k">await</span> storage.<span class="f">readStream</span>(<span class="s">'archive/2026.zip'</span>)) {
   <span class="f">process</span>(chunk);
 }
 
 <span class="c">// write progressively; end() commits, abort() discards</span>
-<span class="k">const</span> upload = <span class="k">await</span> storage.<span class="f">createUploadStream</span>({
-  path: <span class="s">'logs/app.ndjson'</span>,
-});
+<span class="k">const</span> upload = <span class="k">await</span> storage.<span class="f">createUploadStream</span>(<span class="s">'logs/app.ndjson'</span>);
 <span class="k">try</span> {
   <span class="k">for</span> (<span class="k">const</span> event <span class="k">of</span> events) {
     <span class="k">await</span> upload.<span class="f">writeTextLine</span>(JSON.<span class="f">stringify</span>(event));
@@ -667,42 +639,30 @@ upload = <span class="k">await</span> storage.<span class="f">create_upload_stre
         <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> ReadDirectoryOptions
 
 <span class="c"># everything below reports/, files and directories</span>
-entries = <span class="k">await</span> storage.<span class="f">read_directory</span>(
-    StoragePath(<span class="s">"reports"</span>)
-)
+entries = <span class="k">await</span> storage.<span class="f">read_directory</span>(<span class="s">"reports"</span>)
 
 <span class="c"># only the files directly inside reports/</span>
 files = <span class="k">await</span> storage.<span class="f">read_directory</span>(
-    StoragePath(<span class="s">"reports"</span>),
+    <span class="s">"reports"</span>,
     ReadDirectoryOptions(
         recursive=<span class="n">False</span>, include_directories=<span class="n">False</span>
     ),
 )
 
-total = <span class="k">await</span> storage.<span class="f">get_directory_content_length</span>(
-    StoragePath(<span class="s">"reports"</span>)
-)
-info = <span class="k">await</span> storage.<span class="f">get_file_info</span>(
-    StoragePath(<span class="s">"reports/2026/summary.csv"</span>)
-)
+total = <span class="k">await</span> storage.<span class="f">get_directory_content_length</span>(<span class="s">"reports"</span>)
+info = <span class="k">await</span> storage.<span class="f">get_file_info</span>(<span class="s">"reports/2026/summary.csv"</span>)
 <span class="c"># info.exists, info.content_length, info.updated_at</span></pre>
         <pre data-c="ts"><span class="c">// everything below reports/, files and directories</span>
-<span class="k">const</span> entries = <span class="k">await</span> storage.<span class="f">readDirectory</span>({
-  path: <span class="s">'reports'</span>,
-});
+<span class="k">const</span> entries = <span class="k">await</span> storage.<span class="f">readDirectory</span>(<span class="s">'reports'</span>);
 
 <span class="c">// only the files directly inside reports/</span>
 <span class="k">const</span> files = <span class="k">await</span> storage.<span class="f">readDirectory</span>(
-  { path: <span class="s">'reports'</span> },
+  <span class="s">'reports'</span>,
   { recursive: <span class="n">false</span>, includeDirectories: <span class="n">false</span> },
 );
 
-<span class="k">const</span> total = <span class="k">await</span> storage.<span class="f">getDirectoryContentLength</span>({
-  path: <span class="s">'reports'</span>,
-});
-<span class="k">const</span> info = <span class="k">await</span> storage.<span class="f">getFileInfo</span>({
-  path: <span class="s">'reports/2026/summary.csv'</span>,
-});
+<span class="k">const</span> total = <span class="k">await</span> storage.<span class="f">getDirectoryContentLength</span>(<span class="s">'reports'</span>);
+<span class="k">const</span> info = <span class="k">await</span> storage.<span class="f">getFileInfo</span>(<span class="s">'reports/2026/summary.csv'</span>);
 <span class="c">// info.exists, info.contentLength, info.updatedAt</span></pre>
       </div>
     </div>
@@ -829,7 +789,7 @@ info = <span class="k">await</span> storage.<span class="f">get_file_info</span>
 )
 
 signed = <span class="k">await</span> storage.<span class="f">create_signed_url</span>(
-    StoragePath(<span class="s">"2026/summary.csv"</span>),
+    <span class="s">"2026/summary.csv"</span>,
     CreateSignedUrlOptions(
         action=StorageSignedUrlAction.<span class="n">READ</span>,
         expires_in_seconds=<span class="n">900</span>,
@@ -838,21 +798,21 @@ signed = <span class="k">await</span> storage.<span class="f">create_signed_url<
 <span class="c"># signed.url, signed.expires_at, signed.method</span>
 
 <span class="k">await</span> storage.<span class="f">native_copy_file</span>(
-    StoragePath(<span class="s">"2026/summary.csv"</span>),
-    StoragePath(<span class="s">"2026/summary.csv"</span>),
+    <span class="s">"2026/summary.csv"</span>,
+    <span class="s">"2026/summary.csv"</span>,
     NativeCopyFileOptions(
         destination_location=StorageLocation(bucket=<span class="s">"archive"</span>),
     ),
 )</pre>
         <pre data-c="ts"><span class="k">const</span> signed = <span class="k">await</span> storage.<span class="f">createSignedUrl</span>(
-  { path: <span class="s">'2026/summary.csv'</span> },
+  <span class="s">'2026/summary.csv'</span>,
   { action: <span class="s">'read'</span>, expiresInSeconds: <span class="n">900</span> },
 );
 <span class="c">// signed.url, signed.expiresAt, signed.method</span>
 
 <span class="k">await</span> storage.<span class="f">nativeCopyFile</span>(
-  { path: <span class="s">'2026/summary.csv'</span> },
-  { path: <span class="s">'2026/summary.csv'</span> },
+  <span class="s">'2026/summary.csv'</span>,
+  <span class="s">'2026/summary.csv'</span>,
   { destinationLocation: { bucket: <span class="s">'archive'</span> } },
 );</pre>
       </div>
@@ -922,6 +882,8 @@ signed = <span class="k">await</span> storage.<span class="f">create_signed_url<
         <p data-l="pt">As credenciais são <strong>explícitas</strong> quando você as passa, e caem para a própria cadeia do SDK da nuvem quando você não passa — a cadeia de providers da AWS, ou as Application Default Credentials no GCP.</p>
         <p data-l="en">Injecting a <code>client</code> keeps that SDK client under your lifecycle. <code>close()</code> destroys only an S3 client the kernel built itself; on GCP it is a no-op, because the SDK exposes no matching operation, and that is stated rather than papered over.</p>
         <p data-l="pt">Injetar um <code>client</code> mantém aquele client de SDK sob o seu ciclo de vida. O <code>close()</code> destrói apenas um client S3 que o próprio kernel construiu; no GCP ele é um no-op, porque o SDK não expõe operação equivalente, e isso é dito em vez de disfarçado.</p>
+        <p data-l="en">To configure a client the kernel does build, the S3 provider takes <code data-c="py">client_options</code><code data-c="ts">clientOptions</code>. It is merged over the provider's own defaults field by field, so setting one bound keeps the others rather than dropping back to the SDK's unbounded ones — and it is ignored entirely when you inject a client, because then the configuration was yours to make.</p>
+        <p data-l="pt">Para configurar um client que o kernel realmente constrói, o provider S3 recebe <code data-c="py">client_options</code><code data-c="ts">clientOptions</code>. Ele é mesclado campo a campo sobre os defaults do próprio provider, então definir um limite preserva os outros em vez de cair para os do SDK, que não têm limite — e é totalmente ignorado quando você injeta um client, porque aí a configuração já era sua.</p>
       </div>
       <div class="code">
         <div class="code-bar">
@@ -1053,9 +1015,7 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
 )
 
 <span class="k">try</span>:
-    data = <span class="k">await</span> storage.<span class="f">read_binary</span>(
-        StoragePath(<span class="s">"2026/summary.csv"</span>)
-    )
+    data = <span class="k">await</span> storage.<span class="f">read_binary</span>(<span class="s">"2026/summary.csv"</span>)
 <span class="k">except</span> StoragePathNotFoundError <span class="k">as</span> error:
     logger.warning(<span class="s">"missing %s on %s"</span>, error.path, error.provider)
     <span class="k">raise</span>
@@ -1072,9 +1032,7 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
 } <span class="k">from</span> <span class="s">'@storage-kernel/contracts'</span>;
 
 <span class="k">try</span> {
-  <span class="k">const</span> data = <span class="k">await</span> storage.<span class="f">readBinary</span>({
-    path: <span class="s">'2026/summary.csv'</span>,
-  });
+  <span class="k">const</span> data = <span class="k">await</span> storage.<span class="f">readBinary</span>(<span class="s">'2026/summary.csv'</span>);
 } <span class="k">catch</span> (error) {
   <span class="k">if</span> (error <span class="k">instanceof</span> StoragePathNotFoundError) {
     logger.warn(<span class="s">`missing ${error.path} on ${error.provider}`</span>);
@@ -1220,6 +1178,25 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     <div class="col">
       <div class="release" data-c="py">
         <div>
+          <span class="release-v">0.1.0a2</span>
+          <span class="release-d">2026-08-28</span>
+        </div>
+        <div class="release-body">
+          <h4 data-l="en">Changed · breaking</h4>
+          <h4 data-l="pt">Alterado · breaking</h4>
+          <ul data-l="en">
+            <li><strong>A path is a plain string.</strong> Every operation took <code>StoragePath("a/b.txt")</code> and now takes <code>"a/b.txt"</code>. The wrapper held that string beside an optional metadata dict that nothing read — not the kernel, not one of the four providers — while appearing in seventeen signatures and forcing a caller to construct an object to name a file. It is gone from <code>storage_kernel.contracts</code> rather than left with one field, because keeping the class would keep the ceremony and drop only its justification.</li>
+            <li><strong>The S3 provider names its SDK configuration <code>client_options</code></strong>, which is what the TypeScript side already called it. It was <code>client_config</code>, so one argument carried two names across the family — a difference <code>snake_case</code> does not explain and a reader cannot derive from the other side.</li>
+          </ul>
+          <ul data-l="pt">
+            <li><strong>Um path é uma string simples.</strong> Toda operação recebia <code>StoragePath("a/b.txt")</code> e agora recebe <code>"a/b.txt"</code>. O wrapper guardava essa string ao lado de um dict de metadata opcional que ninguém lia — nem o kernel, nem nenhum dos quatro providers — enquanto aparecia em dezessete assinaturas e obrigava quem chama a construir um objeto para nomear um arquivo. Ele saiu de <code>storage_kernel.contracts</code> em vez de ficar com um campo só, porque manter a classe manteria a cerimônia e tiraria apenas a justificativa dela.</li>
+            <li><strong>O provider S3 chama sua configuração de SDK de <code>client_options</code></strong>, que é como o lado TypeScript já chamava. Era <code>client_config</code>, então um argumento carregava dois nomes na família — uma diferença que <code>snake_case</code> não explica e que quem lê não deduz do outro lado.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="release" data-c="py">
+        <div>
           <span class="release-v">0.1.0a1</span>
           <span class="release-d">2026-08-27</span>
           <span class="release-d" data-l="en">first alpha</span>
@@ -1228,8 +1205,19 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
         <div class="release-body">
           <p data-l="en">The contract, the shared core, the factory, the four providers and the portable contract suite. Tagged before changelog fragments were being kept, which is why there is nothing itemised here.</p>
           <p data-l="pt">O contrato, o core compartilhado, a factory, os quatro providers e a suíte de contrato portável. Tagueado antes de os fragmentos de changelog começarem a ser mantidos, e é por isso que não há itens detalhados aqui.</p>
-          <p data-l="en">On PyPI so far: <code>storage-kernel-contracts</code>, <code>storage-kernel-core</code> and <code>storage-kernel-factory</code>. The provider distributions and <code>storage-kernel-testing</code> are still to come.</p>
-          <p data-l="pt">No PyPI até aqui: <code>storage-kernel-contracts</code>, <code>storage-kernel-core</code> e <code>storage-kernel-factory</code>. As distribuições de provider e o <code>storage-kernel-testing</code> ainda vêm.</p>
+        </div>
+      </div>
+
+      <div class="release" data-c="ts">
+        <div>
+          <span class="release-v">0.1.0-alpha.2</span>
+          <span class="release-d">2026-08-28</span>
+        </div>
+        <div class="release-body">
+          <h4 data-l="en">Changed · breaking</h4>
+          <h4 data-l="pt">Alterado · breaking</h4>
+          <p data-l="en"><strong>A path is a plain string.</strong> Every operation took <code>{ path: 'a/b.txt' }</code> and now takes <code>'a/b.txt'</code>. The wrapper held that string beside an optional metadata map that nothing read — not the kernel, not one of the four providers — while appearing in fifteen signatures and forcing a caller to write an object literal to name a file. <code>StoragePath</code> is gone from <code>@storage-kernel/contracts</code> rather than left with one field, because keeping the interface would keep the ceremony and drop only its justification.</p>
+          <p data-l="pt"><strong>Um path é uma string simples.</strong> Toda operação recebia <code>{ path: 'a/b.txt' }</code> e agora recebe <code>'a/b.txt'</code>. O wrapper guardava essa string ao lado de um map de metadata opcional que ninguém lia — nem o kernel, nem nenhum dos quatro providers — enquanto aparecia em quinze assinaturas e obrigava quem chama a escrever um objeto literal para nomear um arquivo. O <code>StoragePath</code> saiu de <code>@storage-kernel/contracts</code> em vez de ficar com um campo só, porque manter a interface manteria a cerimônia e tiraria apenas a justificativa dela.</p>
         </div>
       </div>
 
@@ -1244,8 +1232,6 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
         <div class="release-body">
           <p data-l="en">The contract, the shared core, the factory, the four providers and the portable contract suite. Tagged before changelog fragments were being kept, which is why there is nothing itemised here.</p>
           <p data-l="pt">O contrato, o core compartilhado, a factory, os quatro providers e a suíte de contrato portável. Tagueado antes de os fragmentos de changelog começarem a ser mantidos, e é por isso que não há itens detalhados aqui.</p>
-          <p data-l="en">The tag exists; the packages are not published. Everything on this page matches that tag.</p>
-          <p data-l="pt">A tag existe; os pacotes não estão publicados. Tudo nesta página confere com essa tag.</p>
         </div>
       </div>
     </div>
