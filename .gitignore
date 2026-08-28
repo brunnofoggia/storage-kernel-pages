@@ -1,0 +1,12 @@
+dist/
+tmp/
+node_modules/
+
+# Agent tooling, not part of the site. Vendored skills are 33 MB and the sibling
+# repositories do not track them either.
+.agents/
+.claude/
+skills-lock.json
+
+.history/
+.DS_Store

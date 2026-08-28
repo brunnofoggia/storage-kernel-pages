@@ -1,0 +1,4 @@
+{
+  "url": "https://storage-kernel.foggia.zip",
+  "_url": "The full origin the site is served from, no trailing slash. Drives dist/CNAME, the canonical link, og:url, robots.txt and sitemap.xml. Leave empty to build for local preview only; scripts/build.mjs then skips all of those and says so, and the deploy workflow refuses to run."
+}

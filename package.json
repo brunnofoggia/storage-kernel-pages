@@ -1,0 +1,21 @@
+{
+  "name": "storage-kernel-pages",
+  "private": true,
+  "description": "The one-page site for the Storage Kernel library family",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "verify": "node scripts/verify.mjs",
+    "verify:local": "node scripts/verify-local.mjs",
+    "shots": "node scripts/shots.mjs",
+    "check-all": "npm run build && npm run verify",
+    "serve": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

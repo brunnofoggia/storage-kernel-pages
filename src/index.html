@@ -1,0 +1,1315 @@
+<!doctype html>
+<html lang="en" data-lang="en" data-code="py">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Storage Kernel — read and write files on a local disk, S3, GCP Storage or SFTP behind one contract</title>
+<meta name="description" content="Storage Kernel reads and writes files and objects on a local filesystem, AWS S3, Google Cloud Storage or SFTP, behind one contract of seventeen methods. Python and TypeScript.">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Storage Kernel">
+<meta property="og:description" content="Read and write files on a local disk, S3, GCP Storage or SFTP, behind one contract. Python and TypeScript.">
+<meta name="twitter:card" content="summary">
+<!--CANONICAL-->
+<meta name="theme-color" content="#0A1120">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!--LOGO_SPRITE-->
+<div class="page">
+
+<header class="masthead">
+  <div class="masthead-in">
+    <a class="wordmark" href="#top"><span>storage<span class="slash">/</span>kernel</span><span class="ver">0.1.0a</span></a>
+    <nav aria-label="Sections">
+      <a href="#install"><span data-l="en">Install</span><span data-l="pt">Instalação</span></a>
+      <a href="#paths"><span data-l="en">Paths</span><span data-l="pt">Caminhos</span></a>
+      <a href="#io"><span data-l="en">Streams</span><span data-l="pt">Streams</span></a>
+      <a href="#providers">Providers</a>
+      <a href="#changelog">Changelog</a>
+    </nav>
+    <div class="switches">
+      <div class="switch" role="group" aria-label="Code language">
+        <button type="button" data-set-code="py" aria-pressed="true"><svg aria-hidden="true"><use href="#logo-python"/></svg>Python</button>
+        <button type="button" data-set-code="ts" aria-pressed="false"><svg aria-hidden="true"><use href="#logo-typescript"/></svg>TypeScript</button>
+      </div>
+      <div class="switch" role="group" aria-label="Page language">
+        <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-set-lang="pt" aria-pressed="false">PT</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="shell" id="top">
+
+  <!-- ══ hero ═══════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-main">
+      <p class="eyebrow" data-l="en">Python &amp; TypeScript · files and objects</p>
+      <p class="eyebrow" data-l="pt">Python &amp; TypeScript · arquivos e objetos</p>
+
+      <h1 data-l="en">One contract.<br>Four <em>backends</em>.</h1>
+      <h1 data-l="pt">Um contrato.<br>Quatro <em>backends</em>.</h1>
+
+      <p class="lede" data-l="en">Your code asks for <strong>reports/2026/summary.csv</strong>. Whether that lives on a mounted volume, in an S3 bucket, in Google Cloud Storage or on a remote SFTP server does not change the call — only which distribution you install.</p>
+      <p class="lede" data-l="pt">Seu código pede <strong>reports/2026/summary.csv</strong>. Se isso mora num volume montado, num bucket S3, no Google Cloud Storage ou num servidor SFTP remoto, a chamada não muda — muda apenas qual distribuição você instala.</p>
+
+      <div class="resolver">
+        <div class="resolver-label" data-l="en">How a path resolves</div>
+        <div class="resolver-label" data-l="pt">Como um caminho é resolvido</div>
+        <div class="slots">
+          <div class="slot"><span class="slot-k">bucket · directory</span><span class="slot-v">app-files</span></div>
+          <div class="sep" aria-hidden="true">/</div>
+          <div class="slot opt"><span class="slot-k">prefix</span><span class="slot-v">reports</span></div>
+          <div class="sep" aria-hidden="true">/</div>
+          <div class="slot"><span class="slot-k">path</span><span class="slot-v">2026/summary.csv</span></div>
+        </div>
+        <div class="resolved">
+          <span class="resolved-k" data-l="en">resolves to</span>
+          <span class="resolved-k" data-l="pt">resolve para</span>
+          <span class="resolved-v">app-files/reports/2026/summary.csv</span>
+        </div>
+      </div>
+
+      <div class="code">
+        <div class="code-bar">
+          <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+          <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+          <span data-c="py">python</span><span data-c="ts">typescript</span>
+        </div>
+        <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> StorageLocation, StoragePath
+<span class="k">from</span> storage_kernel.factory <span class="k">import</span> (
+    CreateStorageClientConfig,
+    <span class="f">create_storage_client</span>,
+)
+
+storage = <span class="k">await</span> <span class="f">create_storage_client</span>(
+    CreateStorageClientConfig(
+        provider_name=<span class="s">"aws-s3"</span>,
+        location=StorageLocation(
+            bucket=<span class="s">"app-files"</span>, prefix=<span class="s">"reports"</span>
+        ),
+    )
+)
+
+<span class="k">await</span> storage.<span class="f">send_content</span>(
+    StoragePath(<span class="s">"2026/summary.csv"</span>), <span class="s">"id,total\n1,42\n"</span>
+)
+content = <span class="k">await</span> storage.<span class="f">read_content</span>(
+    StoragePath(<span class="s">"2026/summary.csv"</span>)
+)
+<span class="c"># app-files/reports/2026/summary.csv</span>
+<span class="k">await</span> storage.<span class="f">close</span>()</pre>
+        <pre data-c="ts"><span class="k">import</span> { <span class="f">createStorageClient</span> } <span class="k">from</span> <span class="s">'@storage-kernel/factory'</span>;
+
+<span class="k">const</span> storage = <span class="k">await</span> <span class="f">createStorageClient</span>({
+  providerName: <span class="s">'aws-s3'</span>,
+  location: { bucket: <span class="s">'app-files'</span>, prefix: <span class="s">'reports'</span> },
+});
+
+<span class="k">await</span> storage.<span class="f">sendContent</span>(
+  { path: <span class="s">'2026/summary.csv'</span> },
+  <span class="s">'id,total\n1,42\n'</span>,
+);
+<span class="k">const</span> content = <span class="k">await</span> storage.<span class="f">readContent</span>({
+  path: <span class="s">'2026/summary.csv'</span>,
+});
+<span class="c">// app-files/reports/2026/summary.csv</span>
+<span class="k">await</span> storage.<span class="f">close</span>();</pre>
+      </div>
+
+      <div class="badge-row">
+        <a class="dist" href="https://pypi.org/project/storage-kernel-core/" data-c="py"><svg aria-hidden="true"><use href="#logo-pypi"/></svg>storage-kernel-*</a>
+        <span class="dist" data-c="ts"><svg aria-hidden="true"><use href="#logo-npm"/></svg>@storage-kernel/*<span class="tag" data-l="en">not on npm yet</span><span class="tag" data-l="pt">ainda fora do npm</span></span>
+        <!-- HIDDEN: source links. The library repositories are private, so these
+             resolve to 404 for anyone but the owner. Uncomment to restore.
+        <a class="dist" href="https://github.com/brunnofoggia/storage-kernel-py" data-c="py"><svg aria-hidden="true"><use href="#logo-github"/></svg><span data-l="en">Source</span><span data-l="pt">Código</span></a>
+        <a class="dist" href="https://github.com/brunnofoggia/storage-kernel-js" data-c="ts"><svg aria-hidden="true"><use href="#logo-github"/></svg><span data-l="en">Source</span><span data-l="pt">Código</span></a>
+        -->
+      </div>
+    </div>
+
+    <aside class="margin-notes">
+      <div class="mn-block">
+        <div class="mn-k" data-l="en">Distributions</div>
+        <div class="mn-k" data-l="pt">Distribuições</div>
+        <div class="mn-v">contracts<br>core<br>factory<br>testing<br><em data-l="en">+ 4 providers</em><em data-l="pt">+ 4 providers</em></div>
+      </div>
+      <div class="mn-block">
+        <div class="mn-k" data-l="en">Contract</div>
+        <div class="mn-k" data-l="pt">Contrato</div>
+        <div class="mn-v" data-l="en">17 methods<br>4 backends<br><em>real streams</em></div>
+        <div class="mn-v" data-l="pt">17 métodos<br>4 backends<br><em>streams de verdade</em></div>
+      </div>
+      <div class="mn-block">
+        <div class="mn-k" data-l="en">Requires</div>
+        <div class="mn-k" data-l="pt">Requer</div>
+        <div class="mn-v" data-c="py">Python 3.12+</div>
+        <div class="mn-v" data-c="ts">Node 22+</div>
+      </div>
+      <div class="mn-block">
+        <div class="mn-k" data-l="en">License</div>
+        <div class="mn-k" data-l="pt">Licença</div>
+        <div class="mn-v">MIT</div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ══ 01 · scope ═════════════════════════════════════════════════════ -->
+  <section id="scope">
+    <div class="sec-head">
+      <div class="sec-num">01</div>
+      <div>
+        <h2 data-l="en">One contract, and what it will not fake</h2>
+        <h2 data-l="pt">Um contrato, e o que ele não vai fingir</h2>
+        <p data-l="en">Every provider implements the same seventeen asynchronous methods. Where a service genuinely cannot do something, the call says so instead of improvising.</p>
+        <p data-l="pt">Todo provider implementa os mesmos dezessete métodos assíncronos. Onde um serviço realmente não consegue fazer algo, a chamada diz isso em vez de improvisar.</p>
+      </div>
+    </div>
+    <div class="col prose">
+      <ul data-l="en">
+        <li><strong>Nothing is emulated.</strong> <code data-c="py">create_signed_url</code><code data-c="ts">createSignedUrl</code> on the local filesystem raises <code>StorageCapabilityNotSupportedError</code> rather than inventing a URL that would not work.</li>
+        <li><strong>Streams are real streams.</strong> Reads and progressive uploads use the provider's own stream where it has one, so a multi-gigabyte file never has to fit in memory.</li>
+        <li><strong>Provider options never leak.</strong> <code>region</code> belongs to AWS, <code data-c="py">project_id</code><code data-c="ts">projectId</code> to GCP, host and key material to SFTP. The shared contract knows none of them.</li>
+        <li><strong>Injected clients stay yours.</strong> Hand a provider an SDK client you built and <code>close()</code> leaves it alone — the kernel releases only what it created.</li>
+        <li><strong>An empty path means the configured root</strong>, and only on S3, GCP Storage and SFTP. The local filesystem provider rejects it for every operation.</li>
+        <li><strong>A per-call location replaces the client's, whole.</strong> Locations are never merged field by field, so a call that names another bucket cannot silently keep the old prefix.</li>
+      </ul>
+      <ul data-l="pt">
+        <li><strong>Nada é emulado.</strong> <code data-c="py">create_signed_url</code><code data-c="ts">createSignedUrl</code> no filesystem local levanta <code>StorageCapabilityNotSupportedError</code> em vez de inventar uma URL que não funcionaria.</li>
+        <li><strong>Streams são streams de verdade.</strong> Leituras e uploads progressivos usam o stream do próprio provider quando ele tem um, então um arquivo de vários gigabytes nunca precisa caber na memória.</li>
+        <li><strong>Opções de provider não vazam.</strong> <code>region</code> é da AWS, <code data-c="py">project_id</code><code data-c="ts">projectId</code> é do GCP, host e material de chave são do SFTP. O contrato compartilhado não conhece nenhum deles.</li>
+        <li><strong>Clients injetados continuam seus.</strong> Entregue a um provider um client de SDK que você construiu e o <code>close()</code> não encosta nele — o kernel libera apenas o que ele mesmo criou.</li>
+        <li><strong>Um path vazio significa a raiz configurada</strong>, e só no S3, no GCP Storage e no SFTP. O provider de filesystem local o rejeita em toda operação.</li>
+        <li><strong>Uma location por chamada substitui a do client, inteira.</strong> Locations nunca são mescladas campo a campo, então uma chamada que nomeia outro bucket não consegue manter o prefix antigo em silêncio.</li>
+      </ul>
+      <p class="note" data-l="en">Overwrite is on by default and can be turned off per call. The check always runs against the destination, and a blocked write is <code>StoragePathAlreadyExistsError</code>.</p>
+      <p class="note" data-l="pt">Sobrescrever é o padrão e pode ser desligado por chamada. A verificação sempre roda contra o destino, e uma escrita bloqueada é <code>StoragePathAlreadyExistsError</code>.</p>
+    </div>
+  </section>
+
+  <!-- ══ 02 · install ═══════════════════════════════════════════════════ -->
+  <section id="install">
+    <div class="sec-head">
+      <div class="sec-num">02</div>
+      <div>
+        <h2 data-l="en">Install and first write</h2>
+        <h2 data-l="pt">Instalação e primeira escrita</h2>
+        <p data-l="en">Nothing is bundled. Install the contract, the shared core, the factory and the one provider you need.</p>
+        <p data-l="pt">Nada vem embutido. Instale o contrato, o core compartilhado, a factory e o único provider de que você precisa.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="prose">
+        <h3 data-l="en">Step 1 · install the base</h3>
+        <h3 data-l="pt">Passo 1 · instale a base</h3>
+        <p data-l="en">The contract, the shared core and the factory. No provider yet — that is step 2, and it is a separate distribution so a service that only touches S3 never pulls a Google SDK or a paramiko.</p>
+        <p data-l="pt">O contrato, o core compartilhado e a factory. Nenhum provider ainda — isso é o passo 2, e ele é uma distribuição separada, então um serviço que só toca S3 nunca baixa um SDK do Google nem um paramiko.</p>
+        <p data-l="en"><code>contracts</code> depends on nothing. A consumer that only declares types or catches storage errors installs that one package alone.</p>
+        <p data-l="pt"><code>contracts</code> não depende de nada. Quem só declara tipos ou captura erros de storage instala apenas esse pacote.</p>
+      </div>
+      <div class="code">
+        <div class="code-bar"><span data-c="py">uv</span><span data-c="ts">npm</span><span class="grow">shell</span></div>
+        <pre data-c="py"><span class="pr">$</span> uv add storage-kernel-contracts storage-kernel-core \
+    storage-kernel-factory</pre>
+        <pre data-c="ts"><span class="pr">$</span> npm install @storage-kernel/contracts @storage-kernel/core \
+    @storage-kernel/factory</pre>
+      </div>
+    </div>
+
+    <div class="step-band">
+      <h3 data-l="en">Step 2 · add a provider and write</h3>
+      <h3 data-l="pt">Passo 2 · adicione um provider e escreva</h3>
+      <p data-l="en">Pick where the file lives. The calls are identical either way — only the provider name and its typed options change, which is the whole point of the contract.</p>
+      <p data-l="pt">Escolha onde o arquivo mora. As chamadas são idênticas nos dois casos — mudam apenas o nome do provider e suas opções tipadas, que é justamente o propósito do contrato.</p>
+    </div>
+
+    <div class="row sub">
+      <div class="prose">
+        <div class="subtopic">
+          <span class="bullet" aria-hidden="true">•</span>
+          <code>local-filesystem</code>
+        </div>
+        <p data-l="en">For local development, CI and tests. <code>location.directory</code> is the root and is mandatory; every path resolves below it, and one that tries to escape is rejected with <code>StorageInvalidPathError</code>.</p>
+        <p data-l="pt">Para desenvolvimento local, CI e testes. <code>location.directory</code> é a raiz e é obrigatório; todo path resolve abaixo dela, e um que tente escapar é rejeitado com <code>StorageInvalidPathError</code>.</p>
+        <p data-l="en">Parent directories are created for you, because <code data-c="py">create_directory_if_not_exists</code><code data-c="ts">createDirectoryIfNotExists</code> defaults to true. The aliases <code>local</code> and <code>filesystem</code> also select this provider.</p>
+        <p data-l="pt">Os diretórios pai são criados para você, porque <code data-c="py">create_directory_if_not_exists</code><code data-c="ts">createDirectoryIfNotExists</code> vem como verdadeiro. Os aliases <code>local</code> e <code>filesystem</code> também selecionam este provider.</p>
+      </div>
+      <div>
+        <div class="code">
+          <div class="code-bar"><span data-c="py">uv</span><span data-c="ts">npm</span><span class="grow">shell</span></div>
+          <pre data-c="py"><span class="pr">$</span> uv add storage-kernel-provider-local-filesystem</pre>
+          <pre data-c="ts"><span class="pr">$</span> npm install @storage-kernel/provider-local-filesystem</pre>
+        </div>
+        <div class="code">
+          <div class="code-bar">
+            <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+            <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+            <span data-c="py">local-filesystem</span><span data-c="ts">local-filesystem</span>
+          </div>
+          <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> StorageLocation, StoragePath
+<span class="k">from</span> storage_kernel.factory <span class="k">import</span> (
+    CreateStorageClientConfig,
+    <span class="f">create_storage_client</span>,
+)
+
+storage = <span class="k">await</span> <span class="f">create_storage_client</span>(
+    CreateStorageClientConfig(
+        provider_name=<span class="s">"local-filesystem"</span>,
+        location=StorageLocation(directory=<span class="s">"./var/storage"</span>),
+    )
+)
+
+<span class="k">await</span> storage.<span class="f">send_content</span>(
+    StoragePath(<span class="s">"notes/today.txt"</span>), <span class="s">"hello"</span>
+)
+text = <span class="k">await</span> storage.<span class="f">read_content</span>(
+    StoragePath(<span class="s">"notes/today.txt"</span>)
+)
+<span class="c"># ./var/storage/notes/today.txt</span></pre>
+          <pre data-c="ts"><span class="k">import</span> { <span class="f">createStorageClient</span> } <span class="k">from</span> <span class="s">'@storage-kernel/factory'</span>;
+
+<span class="k">const</span> storage = <span class="k">await</span> <span class="f">createStorageClient</span>({
+  providerName: <span class="s">'local-filesystem'</span>,
+  location: { directory: <span class="s">'./var/storage'</span> },
+});
+
+<span class="k">await</span> storage.<span class="f">sendContent</span>(
+  { path: <span class="s">'notes/today.txt'</span> },
+  <span class="s">'hello'</span>,
+);
+<span class="k">const</span> text = <span class="k">await</span> storage.<span class="f">readContent</span>({
+  path: <span class="s">'notes/today.txt'</span>,
+});
+<span class="c">// ./var/storage/notes/today.txt</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="row sub">
+      <div class="prose">
+        <div class="subtopic">
+          <svg aria-hidden="true"><use href="#logo-aws"/></svg>
+          <code>aws-s3</code>
+        </div>
+        <p data-l="en">For objects in S3 and S3-compatible services. <code>location.bucket</code> is mandatory; <code>location.prefix</code> is optional and may be empty.</p>
+        <p data-l="pt">Para objetos no S3 e em serviços compatíveis com S3. <code>location.bucket</code> é obrigatório; <code>location.prefix</code> é opcional e pode ser vazio.</p>
+        <p data-l="en">Pass <code>credentials</code> to be explicit, or leave them out and the AWS SDK's own provider chain applies.</p>
+        <p data-l="pt">Passe <code>credentials</code> para ser explícito, ou omita e a própria cadeia de credenciais do SDK da AWS se aplica.</p>
+        <p data-l="en">Only the provider name and its options differ from the block above. <code data-c="py">send_binary</code><code data-c="ts">sendBinary</code> is the same call it would be anywhere else.</p>
+        <p data-l="pt">Só o nome do provider e suas opções diferem do bloco acima. <code data-c="py">send_binary</code><code data-c="ts">sendBinary</code> é a mesma chamada que seria em qualquer outro lugar.</p>
+      </div>
+      <div>
+        <div class="code">
+          <div class="code-bar"><span data-c="py">uv</span><span data-c="ts">npm</span><span class="grow">shell</span></div>
+          <pre data-c="py"><span class="pr">$</span> uv add storage-kernel-provider-aws-s3</pre>
+          <pre data-c="ts"><span class="pr">$</span> npm install @storage-kernel/provider-aws-s3</pre>
+        </div>
+        <div class="code">
+          <div class="code-bar">
+            <svg aria-hidden="true"><use href="#logo-aws"/></svg>
+            <span data-c="py">aws-s3</span><span data-c="ts">aws-s3</span>
+          </div>
+          <pre data-c="py"><span class="k">from</span> storage_kernel.provider_aws_s3 <span class="k">import</span> (
+    AwsS3StorageProviderOptions,
+)
+
+storage = <span class="k">await</span> <span class="f">create_storage_client</span>(
+    CreateStorageClientConfig(
+        provider_name=<span class="s">"aws-s3"</span>,
+        location=StorageLocation(
+            bucket=<span class="s">"app-files"</span>, prefix=<span class="s">"reports"</span>
+        ),
+        options=AwsS3StorageProviderOptions(
+            region=<span class="s">"us-east-1"</span>,
+        ),
+    )
+)
+
+<span class="k">await</span> storage.<span class="f">send_binary</span>(
+    StoragePath(<span class="s">"2026/summary.csv"</span>), payload
+)
+<span class="c"># app-files/reports/2026/summary.csv</span></pre>
+          <pre data-c="ts"><span class="k">const</span> storage = <span class="k">await</span> <span class="f">createStorageClient</span>({
+  providerName: <span class="s">'aws-s3'</span>,
+  location: { bucket: <span class="s">'app-files'</span>, prefix: <span class="s">'reports'</span> },
+  options: { region: <span class="s">'us-east-1'</span> },
+});
+
+<span class="k">await</span> storage.<span class="f">sendBinary</span>(
+  { path: <span class="s">'2026/summary.csv'</span> },
+  payload,
+);
+<span class="c">// app-files/reports/2026/summary.csv</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="col notice">
+      <h3 data-l="en">What the registries serve today</h3>
+      <h3 data-l="pt">O que os registries entregam hoje</h3>
+      <p data-l="en">The library is mid-release, and the install lines above are ahead of it. Checked against the registries, not the repositories:</p>
+      <p data-l="pt">A biblioteca está no meio de um release, e as linhas de instalação acima estão à frente dele. Verificado contra os registries, não contra os repositórios:</p>
+      <ul data-l="en">
+        <li>PyPI serves <code>storage-kernel-contracts</code>, <code>storage-kernel-core</code> and <code>storage-kernel-factory</code> at <code>0.1.0a1</code>. The four provider distributions and <code>storage-kernel-testing</code> are not there yet, so a provider <code>uv add</code> will not resolve until they are.</li>
+        <li>npm has nothing under <code>@storage-kernel</code>. The TypeScript side is tagged at <code>0.1.0-alpha.1</code> and the samples on this page match that tag; the <code>npm install</code> lines do not work yet.</li>
+      </ul>
+      <ul data-l="pt">
+        <li>O PyPI entrega <code>storage-kernel-contracts</code>, <code>storage-kernel-core</code> e <code>storage-kernel-factory</code> na <code>0.1.0a1</code>. As quatro distribuições de provider e o <code>storage-kernel-testing</code> ainda não estão lá, então um <code>uv add</code> de provider não resolve enquanto não estiverem.</li>
+        <li>O npm não tem nada sob <code>@storage-kernel</code>. O lado TypeScript está tagueado na <code>0.1.0-alpha.1</code> e os exemplos desta página conferem com essa tag; as linhas <code>npm install</code> ainda não funcionam.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ 03 · paths ═════════════════════════════════════════════════════ -->
+  <section id="paths">
+    <div class="sec-head">
+      <div class="sec-num">03</div>
+      <div>
+        <h2 data-l="en">How a path resolves</h2>
+        <h2 data-l="pt">Como um caminho é resolvido</h2>
+        <p data-l="en">A location roots the client. The path each call asks for is resolved under it, and the provider maps the result to whatever its service calls a place.</p>
+        <p data-l="pt">Uma location enraíza o client. O path que cada chamada pede é resolvido abaixo dela, e o provider mapeia o resultado para o que o serviço dele chama de lugar.</p>
+      </div>
+    </div>
+    <div class="col prose">
+      <div class="code">
+        <div class="code-bar">location.bucket · location.prefix · path</div>
+        <pre><span class="c">app-files    /reports    /2026/summary.csv</span>
+<span class="n">app-files/reports/2026/summary.csv</span></pre>
+      </div>
+      <p data-l="en">On S3 that is an object key under a bucket; on the local filesystem a file under a directory; over SFTP a path under a remote directory. The call that produced it was the same in all three.</p>
+      <p data-l="pt">No S3 isso é uma chave de objeto sob um bucket; no filesystem local, um arquivo sob um diretório; via SFTP, um caminho sob um diretório remoto. A chamada que produziu isso foi a mesma nos três casos.</p>
+    </div>
+
+    <div class="table-wrap" style="margin-top:2rem">
+      <table>
+        <thead>
+          <tr>
+            <th data-l="en">Field</th><th data-l="pt">Campo</th>
+            <th data-l="en">Used by</th><th data-l="pt">Usado por</th>
+            <th data-l="en">Rule</th><th data-l="pt">Regra</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>location.directory</code></td>
+            <td><code>local-filesystem</code><br><code>sftp</code></td>
+            <td data-l="en">The filesystem root. Mandatory and non-empty for the local provider. For SFTP it selects the remote root, falling back to <code data-c="py">root_directory</code><code data-c="ts">rootDirectory</code> and then to <code>.</code>.</td>
+            <td data-l="pt">A raiz no filesystem. Obrigatória e não-vazia no provider local. No SFTP ela seleciona a raiz remota, caindo para <code data-c="py">root_directory</code><code data-c="ts">rootDirectory</code> e depois para <code>.</code>.</td>
+          </tr>
+          <tr>
+            <td><code>location.bucket</code></td>
+            <td><code>aws-s3</code><br><code>gcp-storage</code></td>
+            <td data-l="en">The object-storage bucket. Mandatory for both cloud providers, and the only place a bucket name is ever written.</td>
+            <td data-l="pt">O bucket de object storage. Obrigatório nos dois providers de nuvem, e o único lugar onde um nome de bucket é escrito.</td>
+          </tr>
+          <tr>
+            <td><code>location.prefix</code></td>
+            <td data-l="en">all four</td><td data-l="pt">os quatro</td>
+            <td data-l="en">A namespace below the root. Optional, and may be empty. Directory entries come back with it already stripped off, so a listing reads in the same terms the call was written in.</td>
+            <td data-l="pt">Um namespace abaixo da raiz. Opcional, e pode ser vazio. As entradas de diretório voltam já sem ele, então uma listagem se lê nos mesmos termos em que a chamada foi escrita.</td>
+          </tr>
+          <tr>
+            <td><code>path</code></td>
+            <td data-l="en">all four</td><td data-l="pt">os quatro</td>
+            <td data-l="en">What the call asks for. Always <code>/</code> separated, whatever the platform underneath.</td>
+            <td data-l="pt">O que a chamada pede. Sempre separado por <code>/</code>, seja qual for a plataforma embaixo.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row" style="margin-top:2.5rem">
+      <div class="prose">
+        <h3 data-l="en">Normalization</h3>
+        <h3 data-l="pt">Normalização</h3>
+        <p data-l="en">The same everywhere: backslashes become <code>/</code>, duplicate separators collapse, a leading <code>./</code> and any leading or trailing slash are dropped, and a <code>..</code> segment is rejected with <code>StorageInvalidPathError</code>.</p>
+        <p data-l="pt">Igual em todo lugar: contrabarras viram <code>/</code>, separadores duplicados colapsam, um <code>./</code> inicial e qualquer barra no começo ou no fim caem fora, e um segmento <code>..</code> é rejeitado com <code>StorageInvalidPathError</code>.</p>
+        <p data-l="en">The local provider adds one more check after resolving: the absolute result has to stay below the configured directory, so a symlink or an oddly encoded path cannot walk out of it.</p>
+        <p data-l="pt">O provider local acrescenta mais uma checagem depois de resolver: o resultado absoluto precisa continuar abaixo do diretório configurado, então um symlink ou um path com encoding estranho não consegue sair dele.</p>
+        <p class="note" data-l="en">An operation-level <code>location</code> replaces the client's entirely. It is not merged field by field, so naming another bucket for one call cannot leave the old prefix quietly attached.</p>
+        <p class="note" data-l="pt">Uma <code>location</code> no nível da operação substitui a do client por inteiro. Ela não é mesclada campo a campo, então nomear outro bucket numa chamada não deixa o prefix antigo grudado em silêncio.</p>
+      </div>
+      <div class="code">
+        <div class="code-bar">
+          <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+          <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+          <span data-l="en">per-call location</span><span data-l="pt">location por chamada</span>
+        </div>
+        <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> StorageOperationOptions
+
+<span class="c"># archive/reports/2026/summary.csv — another bucket,</span>
+<span class="c"># and the prefix comes from this location, not the client's</span>
+<span class="k">await</span> storage.<span class="f">read_binary</span>(
+    StoragePath(<span class="s">"2026/summary.csv"</span>),
+    StorageOperationOptions(
+        location=StorageLocation(
+            bucket=<span class="s">"archive"</span>, prefix=<span class="s">"reports"</span>
+        )
+    ),
+)
+
+<span class="c"># rejected: StorageInvalidPathError</span>
+<span class="k">await</span> storage.<span class="f">read_binary</span>(StoragePath(<span class="s">"../etc/passwd"</span>))</pre>
+        <pre data-c="ts"><span class="c">// archive/reports/2026/summary.csv — another bucket,</span>
+<span class="c">// and the prefix comes from this location, not the client's</span>
+<span class="k">await</span> storage.<span class="f">readBinary</span>(
+  { path: <span class="s">'2026/summary.csv'</span> },
+  { location: { bucket: <span class="s">'archive'</span>, prefix: <span class="s">'reports'</span> } },
+);
+
+<span class="c">// rejected: StorageInvalidPathError</span>
+<span class="k">await</span> storage.<span class="f">readBinary</span>({ path: <span class="s">'../etc/passwd'</span> });</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 04 · text, bytes and streams ═══════════════════════════════════ -->
+  <section id="io">
+    <div class="sec-head">
+      <div class="sec-num">04</div>
+      <div>
+        <h2 data-l="en">Text, bytes and streams</h2>
+        <h2 data-l="pt">Texto, bytes e streams</h2>
+        <p data-l="en">Seventeen methods in the contract, and the four you reach for first move whole values.</p>
+        <p data-l="pt">Dezessete métodos no contrato, e os quatro que você usa primeiro movem valores inteiros.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="prose">
+        <h3 data-l="en">Whole values</h3>
+        <h3 data-l="pt">Valores inteiros</h3>
+        <p data-l="en">Text goes through <code data-c="py">send_content</code><code data-c="ts">sendContent</code> and <code data-c="py">read_content</code><code data-c="ts">readContent</code>, UTF-8 unless <code>encoding</code> says otherwise. Bytes go through <code data-c="py">send_binary</code><code data-c="ts">sendBinary</code> and <code data-c="py">read_binary</code><code data-c="ts">readBinary</code>.</p>
+        <p data-l="pt">Texto passa por <code data-c="py">send_content</code><code data-c="ts">sendContent</code> e <code data-c="py">read_content</code><code data-c="ts">readContent</code>, em UTF-8 a menos que <code>encoding</code> diga outra coisa. Bytes passam por <code data-c="py">send_binary</code><code data-c="ts">sendBinary</code> e <code data-c="py">read_binary</code><code data-c="ts">readBinary</code>.</p>
+        <p data-l="en">A full read buffers the entire payload, which is exactly why the stream methods exist beside them. A missing file is <code>StoragePathNotFoundError</code>, on every provider.</p>
+        <p data-l="pt">Uma leitura completa carrega o payload inteiro na memória, que é justamente por que os métodos de stream existem ao lado. Um arquivo ausente é <code>StoragePathNotFoundError</code>, em todo provider.</p>
+        <p data-l="en">A write can carry <code data-c="py">content_type</code><code data-c="ts">contentType</code> and object <code>metadata</code>, and can turn <code>overwrite</code> off for that call alone.</p>
+        <p data-l="pt">Uma escrita pode carregar <code data-c="py">content_type</code><code data-c="ts">contentType</code> e <code>metadata</code> do objeto, e pode desligar o <code>overwrite</code> só naquela chamada.</p>
+      </div>
+      <div class="code">
+        <div class="code-bar">
+          <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+          <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+          <span data-l="en">whole values</span><span data-l="pt">valores inteiros</span>
+        </div>
+        <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> SendContentOptions
+
+<span class="k">await</span> storage.<span class="f">send_content</span>(
+    StoragePath(<span class="s">"docs/readme.md"</span>),
+    <span class="s">"# Hello"</span>,
+    SendContentOptions(
+        content_type=<span class="s">"text/markdown"</span>,
+        overwrite=<span class="n">False</span>,
+    ),
+)
+
+text = <span class="k">await</span> storage.<span class="f">read_content</span>(
+    StoragePath(<span class="s">"docs/readme.md"</span>)
+)
+data = <span class="k">await</span> storage.<span class="f">read_binary</span>(
+    StoragePath(<span class="s">"images/avatar.png"</span>)
+)</pre>
+        <pre data-c="ts"><span class="k">await</span> storage.<span class="f">sendContent</span>(
+  { path: <span class="s">'docs/readme.md'</span> },
+  <span class="s">'# Hello'</span>,
+  { contentType: <span class="s">'text/markdown'</span>, overwrite: <span class="n">false</span> },
+);
+
+<span class="k">const</span> text = <span class="k">await</span> storage.<span class="f">readContent</span>({
+  path: <span class="s">'docs/readme.md'</span>,
+});
+<span class="k">const</span> data = <span class="k">await</span> storage.<span class="f">readBinary</span>({
+  path: <span class="s">'images/avatar.png'</span>,
+});</pre>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="prose">
+        <h3 data-l="en">Streams</h3>
+        <h3 data-l="pt">Streams</h3>
+        <p data-l="en"><code data-c="py">read_stream</code><code data-c="ts">readStream</code> hands back an async byte iterator. <code data-c="py">create_upload_stream</code><code data-c="ts">createUploadStream</code> hands back a writable handle with five methods: <code>write</code>, <code data-c="py">write_text</code><code data-c="ts">writeText</code>, <code data-c="py">write_text_line</code><code data-c="ts">writeTextLine</code>, then <code>end()</code> to finish or <code>abort()</code> to discard.</p>
+        <p data-l="pt"><code data-c="py">read_stream</code><code data-c="ts">readStream</code> devolve um iterador assíncrono de bytes. <code data-c="py">create_upload_stream</code><code data-c="ts">createUploadStream</code> devolve um handle de escrita com cinco métodos: <code>write</code>, <code data-c="py">write_text</code><code data-c="ts">writeText</code>, <code data-c="py">write_text_line</code><code data-c="ts">writeTextLine</code>, e então <code>end()</code> para concluir ou <code>abort()</code> para descartar.</p>
+        <p data-l="en"><code>end()</code> waits for the provider to actually finish. After either <code>end()</code> or <code>abort()</code>, another write fails with a normalized error rather than quietly doing nothing.</p>
+        <p data-l="pt"><code>end()</code> espera o provider realmente concluir. Depois de <code>end()</code> ou <code>abort()</code>, outra escrita falha com um erro normalizado em vez de não fazer nada em silêncio.</p>
+        <p data-l="en">On S3 this is the SDK's managed multipart upload. <code>MultipartUploadOptions</code> tunes <code data-c="py">part_size</code><code data-c="ts">partSize</code>, <code data-c="py">queue_size</code><code data-c="ts">queueSize</code> and <code data-c="py">leave_parts_on_error</code><code data-c="ts">leavePartsOnError</code>; disabling it buffers to a single <code>PutObject</code>. On GCP Storage, <code>enabled</code> maps to a resumable upload.</p>
+        <p data-l="pt">No S3 isso é o upload multipart gerenciado do SDK. <code>MultipartUploadOptions</code> ajusta <code data-c="py">part_size</code><code data-c="ts">partSize</code>, <code data-c="py">queue_size</code><code data-c="ts">queueSize</code> e <code data-c="py">leave_parts_on_error</code><code data-c="ts">leavePartsOnError</code>; desligá-lo acumula tudo num único <code>PutObject</code>. No GCP Storage, <code>enabled</code> vira um upload retomável.</p>
+      </div>
+      <div class="code">
+        <div class="code-bar">
+          <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+          <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+          <span data-l="en">streaming both ways</span><span data-l="pt">stream nos dois sentidos</span>
+        </div>
+        <pre data-c="py"><span class="c"># read without holding the file in memory</span>
+<span class="k">async for</span> chunk <span class="k">in await</span> storage.<span class="f">read_stream</span>(
+    StoragePath(<span class="s">"archive/2026.zip"</span>)
+):
+    <span class="f">process</span>(chunk)
+
+<span class="c"># write progressively; end() commits, abort() discards</span>
+upload = <span class="k">await</span> storage.<span class="f">create_upload_stream</span>(
+    StoragePath(<span class="s">"logs/app.ndjson"</span>)
+)
+<span class="k">try</span>:
+    <span class="k">for</span> event <span class="k">in</span> events:
+        <span class="k">await</span> upload.<span class="f">write_text_line</span>(json.<span class="f">dumps</span>(event))
+    <span class="k">await</span> upload.<span class="f">end</span>()
+<span class="k">except</span> BaseException:
+    <span class="k">await</span> upload.<span class="f">abort</span>()
+    <span class="k">raise</span></pre>
+        <pre data-c="ts"><span class="c">// read without holding the file in memory</span>
+<span class="k">for await</span> (<span class="k">const</span> chunk <span class="k">of</span> <span class="k">await</span> storage.<span class="f">readStream</span>({
+  path: <span class="s">'archive/2026.zip'</span>,
+})) {
+  <span class="f">process</span>(chunk);
+}
+
+<span class="c">// write progressively; end() commits, abort() discards</span>
+<span class="k">const</span> upload = <span class="k">await</span> storage.<span class="f">createUploadStream</span>({
+  path: <span class="s">'logs/app.ndjson'</span>,
+});
+<span class="k">try</span> {
+  <span class="k">for</span> (<span class="k">const</span> event <span class="k">of</span> events) {
+    <span class="k">await</span> upload.<span class="f">writeTextLine</span>(JSON.<span class="f">stringify</span>(event));
+  }
+  <span class="k">await</span> upload.<span class="f">end</span>();
+} <span class="k">catch</span> (error) {
+  <span class="k">await</span> upload.<span class="f">abort</span>(error);
+  <span class="k">throw</span> error;
+}</pre>
+      </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:1rem">
+      <table>
+        <thead>
+          <tr>
+            <th data-l="en">Method</th><th data-l="pt">Método</th>
+            <th data-l="en">Contract</th><th data-l="pt">Contrato</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="grp"><td colspan="2"><span data-l="en">Read · 3</span><span data-l="pt">Leitura · 3</span></td></tr>
+          <tr><td><code data-c="py">read_binary</code><code data-c="ts">readBinary</code></td><td data-l="en">Loads the complete file into memory.</td><td data-l="pt">Carrega o arquivo inteiro na memória.</td></tr>
+          <tr><td><code data-c="py">read_content</code><code data-c="ts">readContent</code></td><td data-l="en">Loads and decodes complete text; UTF-8 by default.</td><td data-l="pt">Carrega e decodifica o texto inteiro; UTF-8 por padrão.</td></tr>
+          <tr><td><code data-c="py">read_stream</code><code data-c="ts">readStream</code></td><td data-l="en">Returns the provider stream as an async byte iterator.</td><td data-l="pt">Devolve o stream do provider como iterador assíncrono de bytes.</td></tr>
+
+          <tr class="grp"><td colspan="2"><span data-l="en">Write · 4</span><span data-l="pt">Escrita · 4</span></td></tr>
+          <tr><td><code data-c="py">send_content</code><code data-c="ts">sendContent</code></td><td data-l="en">Encodes and writes complete text.</td><td data-l="pt">Codifica e escreve o texto inteiro.</td></tr>
+          <tr><td><code data-c="py">send_binary</code><code data-c="ts">sendBinary</code></td><td data-l="en">Writes complete bytes.</td><td data-l="pt">Escreve os bytes inteiros.</td></tr>
+          <tr><td><code data-c="py">send_stream</code><code data-c="ts">sendStream</code></td><td data-l="en">Consumes an async byte stream without full buffering where the backend allows it.</td><td data-l="pt">Consome um stream assíncrono de bytes sem acumular tudo, onde o backend permite.</td></tr>
+          <tr><td><code data-c="py">create_upload_stream</code><code data-c="ts">createUploadStream</code></td><td data-l="en">Returns a progressive upload handle.</td><td data-l="pt">Devolve um handle de upload progressivo.</td></tr>
+
+          <tr class="grp"><td colspan="2"><span data-l="en">Delete · 2</span><span data-l="pt">Remoção · 2</span></td></tr>
+          <tr><td><code data-c="py">delete_file</code><code data-c="ts">deleteFile</code></td><td data-l="en">Idempotently deletes one file. Deleting what is already gone succeeds.</td><td data-l="pt">Remove um arquivo de forma idempotente. Remover o que já sumiu dá certo.</td></tr>
+          <tr><td><code data-c="py">delete_directory</code><code data-c="ts">deleteDirectory</code></td><td data-l="en">Deletes a directory or object prefix; recursive by default.</td><td data-l="pt">Remove um diretório ou prefixo de objetos; recursivo por padrão.</td></tr>
+
+          <tr class="grp"><td colspan="2"><span data-l="en">Directory and metadata · 4</span><span data-l="pt">Diretório e metadados · 4</span></td></tr>
+          <tr><td><code data-c="py">read_directory</code><code data-c="ts">readDirectory</code></td><td data-l="en">Returns sorted, normalized entries.</td><td data-l="pt">Devolve entradas normalizadas e ordenadas.</td></tr>
+          <tr><td><code data-c="py">get_directory_content_length</code><code data-c="ts">getDirectoryContentLength</code></td><td data-l="en">Sums the listed file sizes in bytes; directory entries count zero.</td><td data-l="pt">Soma em bytes os tamanhos dos arquivos listados; entradas de diretório contam zero.</td></tr>
+          <tr><td><code data-c="py">check_path_exists</code><code data-c="ts">checkPathExists</code></td><td data-l="en">Checks a file, or the provider's notion of a directory.</td><td data-l="pt">Checa um arquivo, ou a noção de diretório do provider.</td></tr>
+          <tr><td><code data-c="py">get_file_info</code><code data-c="ts">getFileInfo</code></td><td data-l="en">Returns reliable metadata, or a result that simply says it does not exist.</td><td data-l="pt">Devolve metadados confiáveis, ou um resultado que apenas diz que não existe.</td></tr>
+
+          <tr class="grp"><td colspan="2"><span data-l="en">Copy and URLs · 3</span><span data-l="pt">Cópia e URLs · 3</span></td></tr>
+          <tr><td><code data-c="py">native_copy_file</code><code data-c="ts">nativeCopyFile</code></td><td data-l="en">Copies within one provider using its own mechanism.</td><td data-l="pt">Copia dentro de um provider usando o mecanismo dele.</td></tr>
+          <tr><td><code data-c="py">create_signed_url</code><code data-c="ts">createSignedUrl</code></td><td data-l="en">Creates a signed read, write or delete URL, where the service has them.</td><td data-l="pt">Cria uma URL assinada de leitura, escrita ou remoção, onde o serviço as tem.</td></tr>
+          <tr><td><code data-c="py">get_public_url</code><code data-c="ts">getPublicUrl</code></td><td data-l="en">Resolves a provider or configured public URL.</td><td data-l="pt">Resolve uma URL pública do provider ou configurada.</td></tr>
+
+          <tr class="grp"><td colspan="2"><span data-l="en">Lifecycle · 1</span><span data-l="pt">Ciclo de vida · 1</span></td></tr>
+          <tr><td><code>close</code></td><td data-l="en">Releases only what the kernel created. An injected client is left alone.</td><td data-l="pt">Libera apenas o que o kernel criou. Um client injetado fica intocado.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ 05 · directories ═══════════════════════════════════════════════ -->
+  <section id="directories">
+    <div class="sec-head">
+      <div class="sec-num">05</div>
+      <div>
+        <h2 data-l="en">Directories and metadata</h2>
+        <h2 data-l="pt">Diretórios e metadados</h2>
+        <p data-l="en">Listings are recursive and include directories, unless you say otherwise. Object storage has no directories, so they are synthesized — the same four combinations behave the same on all four backends.</p>
+        <p data-l="pt">As listagens são recursivas e incluem diretórios, a menos que você diga o contrário. Object storage não tem diretórios, então eles são sintetizados — as mesmas quatro combinações se comportam igual nos quatro backends.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="prose">
+        <p data-l="en"><code data-c="py">read_directory</code><code data-c="ts">readDirectory</code> returns entries sorted by path, with the configured prefix already stripped, so a listing reads in the same terms the call was written in.</p>
+        <p data-l="pt"><code data-c="py">read_directory</code><code data-c="ts">readDirectory</code> devolve entradas ordenadas por path, já sem o prefix configurado, então a listagem se lê nos mesmos termos em que a chamada foi escrita.</p>
+        <p data-l="en">Both defaults are exported rather than hidden: <code>DEFAULT_READ_DIRECTORY_RECURSIVE</code> and <code>DEFAULT_READ_DIRECTORY_INCLUDE_DIRECTORIES</code>, both true.</p>
+        <p data-l="pt">Os dois defaults são exportados em vez de escondidos: <code>DEFAULT_READ_DIRECTORY_RECURSIVE</code> e <code>DEFAULT_READ_DIRECTORY_INCLUDE_DIRECTORIES</code>, os dois verdadeiros.</p>
+        <p data-l="en">On S3 and GCP Storage a directory exists when at least one object lives below the prefix — that is what <code data-c="py">check_path_exists</code><code data-c="ts">checkPathExists</code> answers there.</p>
+        <p data-l="pt">No S3 e no GCP Storage um diretório existe quando ao menos um objeto mora abaixo do prefixo — é isso que <code data-c="py">check_path_exists</code><code data-c="ts">checkPathExists</code> responde ali.</p>
+        <p data-l="en"><code data-c="py">get_file_info</code><code data-c="ts">getFileInfo</code> does not raise for a path that is not there. It returns the path you asked for with <code data-c="py">exists=False</code><code data-c="ts">exists: false</code>, because "is it there" and "something went wrong" are different questions.</p>
+        <p data-l="pt"><code data-c="py">get_file_info</code><code data-c="ts">getFileInfo</code> não levanta erro para um path que não está lá. Devolve o path que você pediu com <code data-c="py">exists=False</code><code data-c="ts">exists: false</code>, porque "está lá?" e "deu errado?" são perguntas diferentes.</p>
+        <p class="note" data-l="en">Deleting a directory is recursive by default. Non-recursively, a cloud provider refuses while nested objects still exist rather than deleting part of the tree.</p>
+        <p class="note" data-l="pt">Remover um diretório é recursivo por padrão. Sem recursão, um provider de nuvem recusa enquanto ainda houver objetos aninhados, em vez de apagar parte da árvore.</p>
+      </div>
+      <div class="code">
+        <div class="code-bar">
+          <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+          <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+          <span data-l="en">listing</span><span data-l="pt">listagem</span>
+        </div>
+        <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> ReadDirectoryOptions
+
+<span class="c"># everything below reports/, files and directories</span>
+entries = <span class="k">await</span> storage.<span class="f">read_directory</span>(
+    StoragePath(<span class="s">"reports"</span>)
+)
+
+<span class="c"># only the files directly inside reports/</span>
+files = <span class="k">await</span> storage.<span class="f">read_directory</span>(
+    StoragePath(<span class="s">"reports"</span>),
+    ReadDirectoryOptions(
+        recursive=<span class="n">False</span>, include_directories=<span class="n">False</span>
+    ),
+)
+
+total = <span class="k">await</span> storage.<span class="f">get_directory_content_length</span>(
+    StoragePath(<span class="s">"reports"</span>)
+)
+info = <span class="k">await</span> storage.<span class="f">get_file_info</span>(
+    StoragePath(<span class="s">"reports/2026/summary.csv"</span>)
+)
+<span class="c"># info.exists, info.content_length, info.updated_at</span></pre>
+        <pre data-c="ts"><span class="c">// everything below reports/, files and directories</span>
+<span class="k">const</span> entries = <span class="k">await</span> storage.<span class="f">readDirectory</span>({
+  path: <span class="s">'reports'</span>,
+});
+
+<span class="c">// only the files directly inside reports/</span>
+<span class="k">const</span> files = <span class="k">await</span> storage.<span class="f">readDirectory</span>(
+  { path: <span class="s">'reports'</span> },
+  { recursive: <span class="n">false</span>, includeDirectories: <span class="n">false</span> },
+);
+
+<span class="k">const</span> total = <span class="k">await</span> storage.<span class="f">getDirectoryContentLength</span>({
+  path: <span class="s">'reports'</span>,
+});
+<span class="k">const</span> info = <span class="k">await</span> storage.<span class="f">getFileInfo</span>({
+  path: <span class="s">'reports/2026/summary.csv'</span>,
+});
+<span class="c">// info.exists, info.contentLength, info.updatedAt</span></pre>
+      </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:1rem">
+      <table>
+        <thead>
+          <tr>
+            <th><code>recursive</code></th>
+            <th><code data-c="py">include_directories</code><code data-c="ts">includeDirectories</code></th>
+            <th data-l="en">Returns</th><th data-l="pt">Devolve</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cap yes">✓</td><td class="cap yes">✓</td>
+            <td data-l="en">Everything below the path, files and directories. The default.</td>
+            <td data-l="pt">Tudo abaixo do path, arquivos e diretórios. O padrão.</td>
+          </tr>
+          <tr>
+            <td class="cap yes">✓</td><td class="cap no">—</td>
+            <td data-l="en">Every file below the path, at any depth.</td>
+            <td data-l="pt">Todo arquivo abaixo do path, em qualquer profundidade.</td>
+          </tr>
+          <tr>
+            <td class="cap no">—</td><td class="cap yes">✓</td>
+            <td data-l="en">Direct files, plus the directories directly inside.</td>
+            <td data-l="pt">Arquivos diretos, mais os diretórios imediatamente dentro.</td>
+          </tr>
+          <tr>
+            <td class="cap no">—</td><td class="cap no">—</td>
+            <td data-l="en">Direct files only.</td>
+            <td data-l="pt">Só os arquivos diretos.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ 06 · capabilities ══════════════════════════════════════════════ -->
+  <section id="capabilities">
+    <div class="sec-head">
+      <div class="sec-num">06</div>
+      <div>
+        <h2 data-l="en">What each backend can actually do</h2>
+        <h2 data-l="pt">O que cada backend realmente faz</h2>
+        <p data-l="en">The differences sit in the contract rather than behind it. A capability a service does not have raises <code>StorageCapabilityNotSupportedError</code>, at the call, with the provider named.</p>
+        <p data-l="pt">As diferenças ficam no contrato, não atrás dele. Uma capacidade que um serviço não tem levanta <code>StorageCapabilityNotSupportedError</code>, na chamada, com o provider nomeado.</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-l="en">Capability</th><th data-l="pt">Capacidade</th>
+            <th class="cap">local</th>
+            <th class="cap">aws-s3</th>
+            <th class="cap">gcp-storage</th>
+            <th class="cap">sftp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-l="en">Empty path addresses the root</td><td data-l="pt">Path vazio endereça a raiz</td>
+            <td class="cap no">—</td><td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap yes">✓</td>
+          </tr>
+          <tr>
+            <td data-l="en">Real read stream</td><td data-l="pt">Stream de leitura real</td>
+            <td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap yes">✓</td>
+          </tr>
+          <tr>
+            <td data-l="en">Progressive upload stream</td><td data-l="pt">Stream de upload progressivo</td>
+            <td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap yes">✓</td>
+          </tr>
+          <tr>
+            <td data-l="en">Native copy</td><td data-l="pt">Cópia nativa</td>
+            <td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap yes">✓</td>
+            <td class="cap part" data-l="en">streamed</td><td class="cap part" data-l="pt">via stream</td>
+          </tr>
+          <tr>
+            <td data-l="en">Signed URL — read, write, delete</td><td data-l="pt">URL assinada — leitura, escrita, remoção</td>
+            <td class="cap no">—</td><td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap no">—</td>
+          </tr>
+          <tr>
+            <td data-l="en">Public URL without configuration</td><td data-l="pt">URL pública sem configuração</td>
+            <td class="cap no">—</td><td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap no">—</td>
+          </tr>
+          <tr>
+            <td data-l="en">Public URL from a configured base</td><td data-l="pt">URL pública a partir de uma base configurada</td>
+            <td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap yes">✓</td>
+          </tr>
+          <tr>
+            <td data-l="en">Caller-owned injected client</td><td data-l="pt">Client injetado, do chamador</td>
+            <td class="cap no">—</td><td class="cap yes">✓</td><td class="cap yes">✓</td><td class="cap yes">✓</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend" data-l="en">✓ supported · — not supported, and the call raises rather than pretending. The local filesystem provider has no SDK client to inject.</p>
+    <p class="legend" data-l="pt">✓ suportado · — não suportado, e a chamada levanta erro em vez de fingir. O provider de filesystem local não tem client de SDK para injetar.</p>
+
+    <div class="row" style="margin-top:2.5rem">
+      <div class="prose">
+        <h3 data-l="en">URLs and copies</h3>
+        <h3 data-l="pt">URLs e cópias</h3>
+        <p data-l="en"><code data-c="py">create_signed_url</code><code data-c="ts">createSignedUrl</code> takes an <code>action</code> — <code>read</code>, <code>write</code> or <code>delete</code> — and <code data-c="py">expires_in_seconds</code><code data-c="ts">expiresInSeconds</code>. A signed write forwards <code data-c="py">content_type</code><code data-c="ts">contentType</code> and string metadata to the signature.</p>
+        <p data-l="pt"><code data-c="py">create_signed_url</code><code data-c="ts">createSignedUrl</code> recebe uma <code>action</code> — <code>read</code>, <code>write</code> ou <code>delete</code> — e <code data-c="py">expires_in_seconds</code><code data-c="ts">expiresInSeconds</code>. Uma escrita assinada encaminha <code data-c="py">content_type</code><code data-c="ts">contentType</code> e metadados de string para a assinatura.</p>
+        <p data-l="en"><code data-c="py">get_public_url</code><code data-c="ts">getPublicUrl</code> percent-encodes each path segment and keeps <code>/</code>, so a <code>#</code> or <code>?</code> in a name survives. It resolves a URL and nothing else: it does not change permissions and does not promise the object is readable.</p>
+        <p data-l="pt"><code data-c="py">get_public_url</code><code data-c="ts">getPublicUrl</code> aplica percent-encoding em cada segmento e preserva <code>/</code>, então um <code>#</code> ou <code>?</code> num nome sobrevive. Ela resolve uma URL e nada mais: não muda permissões nem promete que o objeto é legível.</p>
+        <p data-l="en"><code data-c="py">native_copy_file</code><code data-c="ts">nativeCopyFile</code> copies inside one provider using its own mechanism — <code>CopyObject</code> on S3, a filesystem copy locally, a remote stream piped into a remote stream over SFTP. <code data-c="py">destination_location</code><code data-c="ts">destinationLocation</code> addresses the destination when it differs, and the overwrite check always runs there.</p>
+        <p data-l="pt"><code data-c="py">native_copy_file</code><code data-c="ts">nativeCopyFile</code> copia dentro de um provider usando o mecanismo dele — <code>CopyObject</code> no S3, uma cópia de filesystem localmente, um stream remoto canalizado para outro stream remoto no SFTP. <code data-c="py">destination_location</code><code data-c="ts">destinationLocation</code> endereça o destino quando ele difere, e a verificação de overwrite sempre roda lá.</p>
+      </div>
+      <div class="code">
+        <div class="code-bar">
+          <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+          <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+          <span data-l="en">signed URL and copy</span><span data-l="pt">URL assinada e cópia</span>
+        </div>
+        <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> (
+    CreateSignedUrlOptions,
+    NativeCopyFileOptions,
+    StorageSignedUrlAction,
+)
+
+signed = <span class="k">await</span> storage.<span class="f">create_signed_url</span>(
+    StoragePath(<span class="s">"2026/summary.csv"</span>),
+    CreateSignedUrlOptions(
+        action=StorageSignedUrlAction.<span class="n">READ</span>,
+        expires_in_seconds=<span class="n">900</span>,
+    ),
+)
+<span class="c"># signed.url, signed.expires_at, signed.method</span>
+
+<span class="k">await</span> storage.<span class="f">native_copy_file</span>(
+    StoragePath(<span class="s">"2026/summary.csv"</span>),
+    StoragePath(<span class="s">"2026/summary.csv"</span>),
+    NativeCopyFileOptions(
+        destination_location=StorageLocation(bucket=<span class="s">"archive"</span>),
+    ),
+)</pre>
+        <pre data-c="ts"><span class="k">const</span> signed = <span class="k">await</span> storage.<span class="f">createSignedUrl</span>(
+  { path: <span class="s">'2026/summary.csv'</span> },
+  { action: <span class="s">'read'</span>, expiresInSeconds: <span class="n">900</span> },
+);
+<span class="c">// signed.url, signed.expiresAt, signed.method</span>
+
+<span class="k">await</span> storage.<span class="f">nativeCopyFile</span>(
+  { path: <span class="s">'2026/summary.csv'</span> },
+  { path: <span class="s">'2026/summary.csv'</span> },
+  { destinationLocation: { bucket: <span class="s">'archive'</span> } },
+);</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 07 · providers ═════════════════════════════════════════════════ -->
+  <section id="providers">
+    <div class="sec-head">
+      <div class="sec-num">07</div>
+      <div>
+        <h2 data-l="en">Four providers, one call</h2>
+        <h2 data-l="pt">Quatro providers, uma chamada</h2>
+        <p data-l="en">Provider options are typed per provider and never reach the shared contract. Each is its own distribution, so you install exactly the SDKs you use.</p>
+        <p data-l="pt">As opções de provider são tipadas por provider e nunca chegam ao contrato compartilhado. Cada um é uma distribuição própria, então você instala exatamente os SDKs que usa.</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th data-l="en">Distribution</th><th data-l="pt">Distribuição</th>
+            <th data-l="en">Roots on</th><th data-l="pt">Enraíza em</th>
+            <th data-l="en">Use for</th><th data-l="pt">Usar para</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="prov"><span class="bullet" aria-hidden="true">•</span><code>local-filesystem</code></span></td>
+            <td><code data-c="py">storage-kernel-provider-local-filesystem</code><code data-c="ts">@storage-kernel/provider-local-filesystem</code></td>
+            <td><code>directory</code></td>
+            <td data-l="en">Local development, CI and tests. Also <code>local</code> and <code>filesystem</code>.</td>
+            <td data-l="pt">Desenvolvimento local, CI e testes. Também <code>local</code> e <code>filesystem</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="prov"><svg aria-hidden="true"><use href="#logo-aws"/></svg><code>aws-s3</code></span></td>
+            <td><code data-c="py">storage-kernel-provider-aws-s3</code><code data-c="ts">@storage-kernel/provider-aws-s3</code></td>
+            <td><code>bucket</code></td>
+            <td data-l="en">Objects in S3 and S3-compatible services. Also <code>aws</code> and <code>s3</code>.</td>
+            <td data-l="pt">Objetos no S3 e em serviços compatíveis. Também <code>aws</code> e <code>s3</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="prov"><svg aria-hidden="true"><use href="#logo-googlecloud"/></svg><code>gcp-storage</code></span></td>
+            <td><code data-c="py">storage-kernel-provider-gcp-storage</code><code data-c="ts">@storage-kernel/provider-gcp-storage</code></td>
+            <td><code>bucket</code></td>
+            <td data-l="en">Objects in Google Cloud Storage. Also <code>gcp</code> and <code>gcs</code>.</td>
+            <td data-l="pt">Objetos no Google Cloud Storage. Também <code>gcp</code> e <code>gcs</code>.</td>
+          </tr>
+          <tr>
+            <td><span class="prov"><span class="bullet" aria-hidden="true">•</span><code>sftp</code></span></td>
+            <td><code data-c="py">storage-kernel-provider-sftp</code><code data-c="ts">@storage-kernel/provider-sftp</code></td>
+            <td><code>directory</code></td>
+            <td data-l="en">Remote directories over SSH. Also <code>ssh-sftp</code>.</td>
+            <td data-l="pt">Diretórios remotos sobre SSH. Também <code>ssh-sftp</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row" style="margin-top:2.5rem">
+      <div class="prose">
+        <h3 data-l="en">Credentials and lifecycle</h3>
+        <h3 data-l="pt">Credenciais e ciclo de vida</h3>
+        <p data-l="en">Credentials are <strong>explicit</strong> when you pass them and fall back to the cloud SDK's own chain when you do not — the AWS provider chain, or Application Default Credentials on GCP.</p>
+        <p data-l="pt">As credenciais são <strong>explícitas</strong> quando você as passa, e caem para a própria cadeia do SDK da nuvem quando você não passa — a cadeia de providers da AWS, ou as Application Default Credentials no GCP.</p>
+        <p data-l="en">Injecting a <code>client</code> keeps that SDK client under your lifecycle. <code>close()</code> destroys only an S3 client the kernel built itself; on GCP it is a no-op, because the SDK exposes no matching operation, and that is stated rather than papered over.</p>
+        <p data-l="pt">Injetar um <code>client</code> mantém aquele client de SDK sob o seu ciclo de vida. O <code>close()</code> destrói apenas um client S3 que o próprio kernel construiu; no GCP ele é um no-op, porque o SDK não expõe operação equivalente, e isso é dito em vez de disfarçado.</p>
+      </div>
+      <div class="code">
+        <div class="code-bar">
+          <svg aria-hidden="true"><use href="#logo-googlecloud"/></svg>
+          <span data-c="py">gcp-storage</span><span data-c="ts">gcp-storage</span>
+        </div>
+        <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> StorageClientOptions
+<span class="k">from</span> storage_kernel.provider_gcp_storage <span class="k">import</span> (
+    GcpStorageProviderOptions,
+    <span class="f">create_gcp_storage_client</span>,
+)
+
+<span class="c"># the client you built stays yours; close() will not touch it</span>
+storage = <span class="f">create_gcp_storage_client</span>(
+    StorageClientOptions(
+        location=StorageLocation(bucket=<span class="s">"app-files"</span>),
+    ),
+    GcpStorageProviderOptions(
+        project_id=<span class="s">"my-project"</span>,
+        client=my_gcs_client,
+    ),
+)</pre>
+        <pre data-c="ts"><span class="k">import</span> {
+  GcpStorageClient,
+} <span class="k">from</span> <span class="s">'@storage-kernel/provider-gcp-storage'</span>;
+
+<span class="c">// the client you built stays yours; close() will not touch it</span>
+<span class="k">const</span> storage = <span class="k">new</span> <span class="f">GcpStorageClient</span>(
+  { location: { bucket: <span class="s">'app-files'</span> } },
+  { projectId: <span class="s">'my-project'</span>, client: myGcsClient },
+);</pre>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="prose">
+        <h3 data-l="en">SFTP host identity</h3>
+        <h3 data-l="pt">Identidade do host SFTP</h3>
+        <p data-l="en">The SFTP provider will not open a connection without being told how to verify the server. Exactly one policy is required, and there is no default:</p>
+        <p data-l="pt">O provider SFTP não abre conexão sem que se diga como verificar o servidor. Exatamente uma política é obrigatória, e não existe default:</p>
+        <ul data-l="en">
+          <li><code data-c="py">known_hosts_path</code><code data-c="ts">knownHostsPath</code> — an OpenSSH <code>known_hosts</code> file.</li>
+          <li><code data-c="py">host_key_sha256</code><code data-c="ts">hostKeySha256</code> — a fingerprint in <code>SHA256:&lt;base64&gt;</code> form.</li>
+          <li><code data-c="py">host_verifier</code><code data-c="ts">hostVerifier</code> — your own predicate over the host key.</li>
+          <li><code data-c="py">dangerously_disable_host_key_verification</code><code data-c="ts">dangerouslyDisableHostKeyVerification</code> — the bypass, named so it cannot be typed by accident.</li>
+        </ul>
+        <ul data-l="pt">
+          <li><code data-c="py">known_hosts_path</code><code data-c="ts">knownHostsPath</code> — um arquivo <code>known_hosts</code> do OpenSSH.</li>
+          <li><code data-c="py">host_key_sha256</code><code data-c="ts">hostKeySha256</code> — uma fingerprint no formato <code>SHA256:&lt;base64&gt;</code>.</li>
+          <li><code data-c="py">host_verifier</code><code data-c="ts">hostVerifier</code> — seu próprio predicado sobre a chave do host.</li>
+          <li><code data-c="py">dangerously_disable_host_key_verification</code><code data-c="ts">dangerouslyDisableHostKeyVerification</code> — o bypass, com um nome que não se digita por acidente.</li>
+        </ul>
+        <p data-l="en">Two policies at once, or a malformed fingerprint, is a <code>StorageConfigurationError</code> rather than a quiet fallback to something weaker.</p>
+        <p data-l="pt">Duas políticas ao mesmo tempo, ou uma fingerprint malformada, é um <code>StorageConfigurationError</code> em vez de uma queda silenciosa para algo mais fraco.</p>
+        <p class="note" data-l="en">The Python provider also disables SSH agent and default-key discovery, so a key is used because you named it, not because it happened to be in the environment.</p>
+        <p class="note" data-l="pt">O provider Python também desliga o SSH agent e a descoberta de chaves default, então uma chave é usada porque você a nomeou, não porque ela por acaso estava no ambiente.</p>
+      </div>
+      <div class="code">
+        <div class="code-bar">
+          <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+          <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+          <span data-c="py">sftp</span><span data-c="ts">sftp</span>
+        </div>
+        <pre data-c="py"><span class="k">from</span> storage_kernel.provider_sftp <span class="k">import</span> (
+    SftpStorageProviderOptions,
+)
+
+storage = <span class="k">await</span> <span class="f">create_storage_client</span>(
+    CreateStorageClientConfig(
+        provider_name=<span class="s">"sftp"</span>,
+        location=StorageLocation(directory=<span class="s">"uploads"</span>),
+        options=SftpStorageProviderOptions(
+            host=<span class="s">"sftp.example.com"</span>,
+            username=<span class="s">"app"</span>,
+            private_key_path=<span class="s">"/run/secrets/id_ed25519"</span>,
+            known_hosts_path=<span class="s">"/home/app/.ssh/known_hosts"</span>,
+        ),
+    )
+)</pre>
+        <pre data-c="ts"><span class="k">const</span> storage = <span class="k">await</span> <span class="f">createStorageClient</span>({
+  providerName: <span class="s">'sftp'</span>,
+  location: { directory: <span class="s">'uploads'</span> },
+  options: {
+    host: <span class="s">'sftp.example.com'</span>,
+    username: <span class="s">'app'</span>,
+    privateKeyPath: <span class="s">'/run/secrets/id_ed25519'</span>,
+    knownHostsPath: <span class="s">'/home/app/.ssh/known_hosts'</span>,
+  },
+});</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 08 · errors ════════════════════════════════════════════════════ -->
+  <section id="errors">
+    <div class="sec-head">
+      <div class="sec-num">08</div>
+      <div>
+        <h2 data-l="en">Errors are part of the contract</h2>
+        <h2 data-l="pt">Erros fazem parte do contrato</h2>
+        <p data-l="en">Every error carries <code>provider</code>, <code>path</code>, <code>code</code> and <code>cause</code> when the failure exposes them.</p>
+        <p data-l="pt">Todo erro carrega <code>provider</code>, <code>path</code>, <code>code</code> e <code>cause</code> quando a falha os expõe.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="prose">
+        <p data-l="en">Only <strong>not found</strong> and <strong>permission denied</strong> are normalized, because only those two are what a caller branches on without knowing which service is behind the contract.</p>
+        <p data-l="pt">Só <strong>não encontrado</strong> e <strong>permissão negada</strong> são normalizados, porque só esses dois são aquilo em que quem chama ramifica sem saber qual serviço está atrás do contrato.</p>
+        <p data-l="en">Everything else becomes <code>StorageProviderError</code> and <strong>keeps the message the provider produced</strong>. Wrapping adds context, it never translates: <code>provider</code>, <code>path</code> and <code>code</code> are attached and the original stays in <code>cause</code>. Structured loggers read the message and the traceback and do not walk the cause chain on their own.</p>
+        <p data-l="pt">Todo o resto vira <code>StorageProviderError</code> e <strong>preserva a mensagem que o provider produziu</strong>. O wrap acrescenta contexto, nunca traduz: <code>provider</code>, <code>path</code> e <code>code</code> são anexados e o original fica em <code>cause</code>. Loggers estruturados leem a mensagem e o traceback e não percorrem a cadeia de causas sozinhos.</p>
+        <p data-l="en">An error that already is a <code>StorageKernelError</code> is never re-wrapped and never reclassified. It receives only the context fields it was missing, so a failure raised deep inside a client still reports where it came from.</p>
+        <p data-l="pt">Um erro que já é <code>StorageKernelError</code> nunca é reembrulhado nem reclassificado. Ele recebe apenas os campos de contexto que faltavam, então uma falha levantada lá no fundo de um client continua dizendo de onde veio.</p>
+        <p class="note" data-l="en"><code>code</code> is the provider's own failure code, not the name of the error class. The class already discriminates the type; repeating it as a code would report something meaningless on every ordinary failure.</p>
+        <p class="note" data-l="pt"><code>code</code> é o código de falha do próprio provider, não o nome da classe de erro. A classe já discrimina o tipo; repeti-la como código reportaria algo sem sentido em toda falha comum.</p>
+      </div>
+      <div class="code">
+        <div class="code-bar">
+          <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+          <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+          <span data-l="en">handling</span><span data-l="pt">tratamento</span>
+        </div>
+        <pre data-c="py"><span class="k">from</span> storage_kernel.contracts <span class="k">import</span> (
+    StoragePathNotFoundError,
+    StoragePermissionError,
+    StorageProviderError,
+)
+
+<span class="k">try</span>:
+    data = <span class="k">await</span> storage.<span class="f">read_binary</span>(
+        StoragePath(<span class="s">"2026/summary.csv"</span>)
+    )
+<span class="k">except</span> StoragePathNotFoundError <span class="k">as</span> error:
+    logger.warning(<span class="s">"missing %s on %s"</span>, error.path, error.provider)
+    <span class="k">raise</span>
+<span class="k">except</span> StoragePermissionError:
+    <span class="k">raise</span>
+<span class="k">except</span> StorageProviderError <span class="k">as</span> error:
+    <span class="c"># the SDK's own message, plus provider/path/code</span>
+    logger.error(<span class="s">"%s (%s)"</span>, error, error.code)
+    <span class="k">raise</span></pre>
+        <pre data-c="ts"><span class="k">import</span> {
+  StoragePathNotFoundError,
+  StoragePermissionError,
+  StorageProviderError,
+} <span class="k">from</span> <span class="s">'@storage-kernel/contracts'</span>;
+
+<span class="k">try</span> {
+  <span class="k">const</span> data = <span class="k">await</span> storage.<span class="f">readBinary</span>({
+    path: <span class="s">'2026/summary.csv'</span>,
+  });
+} <span class="k">catch</span> (error) {
+  <span class="k">if</span> (error <span class="k">instanceof</span> StoragePathNotFoundError) {
+    logger.warn(<span class="s">`missing ${error.path} on ${error.provider}`</span>);
+  } <span class="k">else if</span> (error <span class="k">instanceof</span> StorageProviderError) {
+    <span class="c">// the SDK's own message, plus provider/path/code</span>
+    logger.error(error.message, { code: error.code });
+  }
+  <span class="k">throw</span> error;
+}</pre>
+      </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:1rem">
+      <table>
+        <thead>
+          <tr>
+            <th data-l="en">Class</th><th data-l="pt">Classe</th>
+            <th data-l="en">Raised when</th><th data-l="pt">Levantado quando</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>StoragePathNotFoundError</code></td><td data-l="en">The requested path does not exist. Normalized across providers.</td><td data-l="pt">O path pedido não existe. Normalizado entre providers.</td></tr>
+          <tr><td><code>StoragePermissionError</code></td><td data-l="en">The provider denied authentication or authorization. Normalized across providers.</td><td data-l="pt">O provider negou autenticação ou autorização. Normalizado entre providers.</td></tr>
+          <tr><td><code>StoragePathAlreadyExistsError</code></td><td data-l="en">Overwrite was off and the destination already exists.</td><td data-l="pt">Overwrite estava desligado e o destino já existe.</td></tr>
+          <tr><td><code>StorageInvalidPathError</code></td><td data-l="en">An empty, traversing or otherwise unsafe path.</td><td data-l="pt">Um path vazio, com travessia ou de outra forma inseguro.</td></tr>
+          <tr><td><code>StorageCapabilityNotSupportedError</code></td><td data-l="en">The provider cannot implement an optional capability, such as a signed URL on a local disk.</td><td data-l="pt">O provider não consegue implementar uma capacidade opcional, como uma URL assinada num disco local.</td></tr>
+          <tr><td><code>StorageConfigurationError</code></td><td data-l="en">Required, invalid or mutually exclusive configuration — a missing bucket, two SFTP host policies at once.</td><td data-l="pt">Configuração obrigatória, inválida ou mutuamente exclusiva — um bucket ausente, duas políticas de host SFTP ao mesmo tempo.</td></tr>
+          <tr><td><code>StorageProviderError</code></td><td data-l="en">Any other provider or stream failure, with the provider's own message kept.</td><td data-l="pt">Qualquer outra falha de provider ou de stream, preservando a mensagem do próprio provider.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ 09 · observability & extension ═════════════════════════════════ -->
+  <section id="extend">
+    <div class="sec-head">
+      <div class="sec-num">09</div>
+      <div>
+        <h2 data-l="en">Observability, and your own backend</h2>
+        <h2 data-l="pt">Observabilidade, e seu próprio backend</h2>
+        <p data-l="en">Silent unless you ask, and open to a store the kernel has never heard of.</p>
+        <p data-l="pt">Silencioso a menos que você peça, e aberto a um destino que o kernel nunca viu.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="prose">
+        <h3 data-l="en">Lifecycle events</h3>
+        <h3 data-l="pt">Eventos de ciclo de vida</h3>
+        <p data-l="en">Pass a <code>logger</code> to receive events, or <code>debug</code> to send them to the console. Without either the client says nothing. The levels are fixed by the contract, not by each provider: starts and completions on <code>debug</code>, a missing path or an aborted upload on <code data-c="py">warning</code><code data-c="ts">warn</code>, permission and provider failures on <code>error</code>.</p>
+        <p data-l="pt">Passe um <code>logger</code> para receber eventos, ou <code>debug</code> para mandá-los ao console. Sem nenhum dos dois o client não diz nada. Os níveis são fixados pelo contrato, não por cada provider: início e conclusão em <code>debug</code>, path ausente ou upload abortado em <code data-c="py">warning</code><code data-c="ts">warn</code>, falhas de permissão e de provider em <code>error</code>.</p>
+        <p data-l="en">Completion is reported when it actually happened: a read stream after it has been fully consumed, an upload after <code>end()</code> succeeded — not when the call returned.</p>
+        <p data-l="pt">A conclusão é reportada quando realmente aconteceu: um stream de leitura depois de consumido por inteiro, um upload depois de <code>end()</code> ter dado certo — não quando a chamada retornou.</p>
+        <p data-l="en">The context is provider, operation, path, an optional destination path, and a location trimmed to <code>directory</code>, <code>bucket</code> and <code>prefix</code>. Content, credentials and object metadata never appear in it.</p>
+        <p data-l="pt">O contexto é provider, operação, path, um path de destino opcional, e uma location reduzida a <code>directory</code>, <code>bucket</code> e <code>prefix</code>. Conteúdo, credenciais e metadados de objeto nunca aparecem nele.</p>
+        <p data-l="en">A logger may implement any subset of the four levels; one it does not implement is silent unless <code>debug</code> is on.</p>
+        <p data-l="pt">Um logger pode implementar qualquer subconjunto dos quatro níveis; um que ele não implementa fica silencioso a menos que <code>debug</code> esteja ligado.</p>
+
+        <h3 style="margin-top:2rem" data-l="en">Bring your own provider</h3>
+        <h3 style="margin-top:2rem" data-l="pt">Traga seu próprio provider</h3>
+        <p data-l="en">The factory takes a <code data-c="py">provider_class</code><code data-c="ts">providerClass</code> — a class, never an instance — and then any provider name is allowed. If the class declares its own canonical name, it has to match the one you asked for.</p>
+        <p data-l="pt">A factory recebe um <code data-c="py">provider_class</code><code data-c="ts">providerClass</code> — uma classe, nunca uma instância — e então qualquer nome de provider é permitido. Se a classe declara o próprio nome canônico, ele precisa bater com o que você pediu.</p>
+        <p data-l="en">The client is wrapped in the same observability boundary either way, so a provider you wrote logs the same events as the four that ship here without inheriting anything.</p>
+        <p data-l="pt">O client é envolvido na mesma fronteira de observabilidade nos dois casos, então um provider que você escreveu emite os mesmos eventos que os quatro que vêm aqui, sem herdar nada.</p>
+        <p data-l="en">The testing package publishes the portable contract suite these four are held to, so yours can be held to it too.</p>
+        <p data-l="pt">O pacote de testing publica a suíte de contrato portável a que estes quatro são submetidos, então o seu pode ser submetido a ela também.</p>
+      </div>
+      <div>
+        <div class="code">
+          <div class="code-bar">
+            <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+            <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+            <span data-l="en">logging</span><span data-l="pt">logging</span>
+          </div>
+          <pre data-c="py">storage = <span class="k">await</span> <span class="f">create_storage_client</span>(
+    CreateStorageClientConfig(
+        provider_name=<span class="s">"aws-s3"</span>,
+        location=StorageLocation(bucket=<span class="s">"app-files"</span>),
+        logger=my_logger,   <span class="c"># .debug(message, context)</span>
+    )
+)</pre>
+          <pre data-c="ts"><span class="k">const</span> storage = <span class="k">await</span> <span class="f">createStorageClient</span>({
+  providerName: <span class="s">'aws-s3'</span>,
+  location: { bucket: <span class="s">'app-files'</span> },
+  logger: {
+    debug: (message, context) =&gt; myLogger.debug(message, context),
+  },
+});</pre>
+        </div>
+        <div class="code">
+          <div class="code-bar">
+            <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+            <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+            <span data-l="en">custom provider</span><span data-l="pt">provider customizado</span>
+          </div>
+          <pre data-c="py"><span class="k">await</span> <span class="f">create_storage_client</span>(
+    CreateStorageClientConfig(
+        provider_name=<span class="s">"azure-blob"</span>,
+        provider_class=MyAzureBlobClient,
+    )
+)</pre>
+          <pre data-c="ts"><span class="k">await</span> <span class="f">createStorageClient</span>({
+  providerName: <span class="s">'azure-blob'</span>,
+  providerClass: MyAzureBlobClient,
+});</pre>
+        </div>
+        <div class="code">
+          <div class="code-bar">
+            <svg aria-hidden="true" data-c="py"><use href="#logo-python"/></svg>
+            <svg aria-hidden="true" data-c="ts"><use href="#logo-typescript"/></svg>
+            <span data-l="en">the contract suite</span><span data-l="pt">a suíte de contrato</span>
+          </div>
+          <pre data-c="py"><span class="k">from</span> storage_kernel.testing <span class="k">import</span> (
+    <span class="f">assert_storage_client_contract</span>,
+)
+
+<span class="k">await</span> <span class="f">assert_storage_client_contract</span>(storage)</pre>
+          <pre data-c="ts"><span class="k">import</span> {
+  <span class="f">defineStorageClientContractTests</span>,
+} <span class="k">from</span> <span class="s">'@storage-kernel/testing'</span>;
+
+<span class="f">defineStorageClientContractTests</span>(<span class="s">'azure-blob'</span>, context);</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 10 · changelog ═════════════════════════════════════════════════ -->
+  <!-- #changelog is the anchor the published package metadata points at, so it
+       is a public URL target rather than an internal one, and does not get
+       renamed. scripts/probe.js asserts it still exists. -->
+  <section id="changelog">
+    <div class="sec-head">
+      <div class="sec-num">10</div>
+      <div>
+        <h2 data-l="en">Changelog</h2>
+        <h2 data-l="pt">Changelog</h2>
+        <p data-l="en">Early, and honest about it. Each implementation releases on its own, so this follows the language you picked above. Within one release every distribution shares a version.</p>
+        <p data-l="pt">No começo, e honesto sobre isso. Cada implementação lança por conta própria, então isto acompanha a linguagem escolhida acima. Dentro de um release, toda distribuição compartilha a versão.</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="release" data-c="py">
+        <div>
+          <span class="release-v">0.1.0a1</span>
+          <span class="release-d">2026-08-27</span>
+          <span class="release-d" data-l="en">first alpha</span>
+          <span class="release-d" data-l="pt">primeiro alpha</span>
+        </div>
+        <div class="release-body">
+          <p data-l="en">The contract, the shared core, the factory, the four providers and the portable contract suite. Tagged before changelog fragments were being kept, which is why there is nothing itemised here.</p>
+          <p data-l="pt">O contrato, o core compartilhado, a factory, os quatro providers e a suíte de contrato portável. Tagueado antes de os fragmentos de changelog começarem a ser mantidos, e é por isso que não há itens detalhados aqui.</p>
+          <p data-l="en">On PyPI so far: <code>storage-kernel-contracts</code>, <code>storage-kernel-core</code> and <code>storage-kernel-factory</code>. The provider distributions and <code>storage-kernel-testing</code> are still to come.</p>
+          <p data-l="pt">No PyPI até aqui: <code>storage-kernel-contracts</code>, <code>storage-kernel-core</code> e <code>storage-kernel-factory</code>. As distribuições de provider e o <code>storage-kernel-testing</code> ainda vêm.</p>
+        </div>
+      </div>
+
+      <div class="release" data-c="ts">
+        <div>
+          <span class="release-v">0.1.0-alpha.1</span>
+          <span class="release-d" data-l="en">first alpha</span>
+          <span class="release-d" data-l="pt">primeiro alpha</span>
+          <span class="release-tag" data-l="en">not on npm yet</span>
+          <span class="release-tag" data-l="pt">ainda fora do npm</span>
+        </div>
+        <div class="release-body">
+          <p data-l="en">The contract, the shared core, the factory, the four providers and the portable contract suite. Tagged before changelog fragments were being kept, which is why there is nothing itemised here.</p>
+          <p data-l="pt">O contrato, o core compartilhado, a factory, os quatro providers e a suíte de contrato portável. Tagueado antes de os fragmentos de changelog começarem a ser mantidos, e é por isso que não há itens detalhados aqui.</p>
+          <p data-l="en">The tag exists; the packages are not published. Everything on this page matches that tag.</p>
+          <p data-l="pt">A tag existe; os pacotes não estão publicados. Tudo nesta página confere com essa tag.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="shell">
+    <div class="footer-grid">
+      <!-- HIDDEN: the whole Documentation column.
+           The library repositories are private, so these resolve to 404 for
+           anyone but the owner. Kept verbatim rather than deleted: uncomment to
+           restore the moment the repositories are public.
+      <div class="footer-col">
+        <h4 data-l="en">Documentation</h4>
+        <h4 data-l="pt">Documentação</h4>
+        <ul data-c="py">
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-py/blob/main/docs/storage-kernel-api-reference.md" data-l="en">API reference</a><a href="https://github.com/brunnofoggia/storage-kernel-py/blob/main/docs/storage-kernel-api-reference.md" data-l="pt">Referência de API</a></li>
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-py/blob/main/docs/storage-kernel-architecture-decisions.md" data-l="en">Architecture decisions</a><a href="https://github.com/brunnofoggia/storage-kernel-py/blob/main/docs/storage-kernel-architecture-decisions.md" data-l="pt">Decisões de arquitetura</a></li>
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-py/blob/main/docs/structure.md" data-l="en">Structure</a><a href="https://github.com/brunnofoggia/storage-kernel-py/blob/main/docs/structure.md" data-l="pt">Estrutura</a></li>
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-py/blob/main/docs/maintenance.md" data-l="en">Maintenance</a><a href="https://github.com/brunnofoggia/storage-kernel-py/blob/main/docs/maintenance.md" data-l="pt">Manutenção</a></li>
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-py/blob/main/docs/release.md">Release</a></li>
+        </ul>
+        <ul data-c="ts">
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-js/blob/main/docs/storage-kernel-api-reference.md" data-l="en">API reference</a><a href="https://github.com/brunnofoggia/storage-kernel-js/blob/main/docs/storage-kernel-api-reference.md" data-l="pt">Referência de API</a></li>
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-js/blob/main/docs/storage-kernel-architecture-decisions.md" data-l="en">Architecture decisions</a><a href="https://github.com/brunnofoggia/storage-kernel-js/blob/main/docs/storage-kernel-architecture-decisions.md" data-l="pt">Decisões de arquitetura</a></li>
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-js/blob/main/docs/structure.md" data-l="en">Structure</a><a href="https://github.com/brunnofoggia/storage-kernel-js/blob/main/docs/structure.md" data-l="pt">Estrutura</a></li>
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-js/blob/main/docs/maintenance.md" data-l="en">Maintenance</a><a href="https://github.com/brunnofoggia/storage-kernel-js/blob/main/docs/maintenance.md" data-l="pt">Manutenção</a></li>
+          <li><a href="https://github.com/brunnofoggia/storage-kernel-js/blob/main/docs/release.md">Release</a></li>
+        </ul>
+      </div>
+      -->
+
+      <div class="footer-col">
+        <h4>Python</h4>
+        <ul>
+          <!-- HIDDEN: private repository. <li><a href="https://github.com/brunnofoggia/storage-kernel-py">GitHub</a></li> -->
+          <li><a href="https://pypi.org/project/storage-kernel-core/">PyPI · storage-kernel-core</a></li>
+          <li><span style="color:var(--cream-faint)">Python 3.12+</span></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>TypeScript</h4>
+        <ul>
+          <!-- HIDDEN: private repository. <li><a href="https://github.com/brunnofoggia/storage-kernel-js">GitHub</a></li> -->
+          <li><span style="color:var(--cream-faint)">npm · @storage-kernel/core</span></li>
+          <li><span style="color:var(--cream-faint)" data-l="en">not published yet</span><span style="color:var(--cream-faint)" data-l="pt">ainda não publicado</span></li>
+          <li><span style="color:var(--cream-faint)">Node 22+</span></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-l="en">Contract</h4>
+        <h4 data-l="pt">Contrato</h4>
+        <ul>
+          <li><span style="color:var(--cream-dim)" data-l="en">17 methods</span><span style="color:var(--cream-dim)" data-l="pt">17 métodos</span></li>
+          <li><span style="color:var(--cream-dim)" data-l="en">4 backends · 8 distributions</span><span style="color:var(--cream-dim)" data-l="pt">4 backends · 8 distribuições</span></li>
+          <li><span style="color:var(--cream-dim)" data-l="en">Read, write and stream</span><span style="color:var(--cream-dim)" data-l="pt">Ler, escrever e transmitir</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-note">
+      <span>MIT</span>
+      <span data-l="en">Storage Kernel is at <code>0.1.0a</code>. The contract may still move.</span>
+      <span data-l="pt">Storage Kernel está em <code>0.1.0a</code>. O contrato ainda pode mudar.</span>
+    </div>
+  </div>
+</footer>
+
+</div>
+<script src="app.js" defer></script>
+</body>
+</html>

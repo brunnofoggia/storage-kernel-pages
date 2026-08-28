@@ -1,0 +1,92 @@
+name: deploy
+
+# Publishes dist/ to GitHub Pages on the custom domain in site.config.json.
+#
+# Runs when ci succeeds on main, and can always be started by hand. It chains off
+# ci rather than off the push itself so a commit that fails the gate never
+# reaches the site: workflow_run fires on `completed`, which includes failure, so
+# the conclusion is checked explicitly below.
+#
+# The consequence, deliberately accepted: every commit that lands on main and
+# passes ci goes live. Rolling back is a revert plus another deploy — there is no
+# button that un-publishes. To go back to manual-only, delete the workflow_run
+# block and keep workflow_dispatch.
+#
+# One-time setup outside this file:
+#   - Settings > Pages > Source: GitHub Actions
+#   - a DNS CNAME record for the subdomain pointing at <user>.github.io
+#   - Settings > Pages > Enforce HTTPS, once the certificate is issued
+#
+# The domain itself is not configured here. It lives in site.config.json, which
+# the build turns into dist/CNAME — without that file Pages silently drops the
+# custom domain, so this workflow refuses to run when it is unset.
+
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # workflow_run fires on failure too, so the conclusion has to be read.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # A workflow_run checkout defaults to the default branch's tip, which
+          # may already be a later commit than the one ci verified.
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Refuse to deploy without a configured domain
+        run: |
+          url=$(node -p "require('./site.config.json').url || ''")
+          if [ -z "$url" ]; then
+            echo "::error::site.config.json has no \"url\". Set the subdomain before deploying — without it the build emits no CNAME and Pages reverts to <user>.github.io."
+            exit 1
+          fi
+          echo "deploying to $url"
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run verify
+
+      - name: Confirm the artifact carries the domain
+        run: |
+          test -f dist/CNAME || { echo "::error::dist/CNAME missing"; exit 1; }
+          echo "CNAME: $(cat dist/CNAME)"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
