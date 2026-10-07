@@ -19,7 +19,7 @@ export const WIDTHS = [1440, 1280, 1024, 834, 768, 430, 390, 360];
 /* The built page must carry exactly these brand marks. */
 export const EXPECTED_SYMBOLS = 7;
 
-/* The floor design-spec.md §6 sets for rendered text. */
+/* The floor docs/design-spec.md §6 sets for rendered text. */
 export const MIN_FONT_PX = 12;
 
 /* WCAG 2.2 AA, Target Size (Minimum). */

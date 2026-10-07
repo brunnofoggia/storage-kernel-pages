@@ -78,7 +78,9 @@ src/                       hand-authored, the only thing you edit
 └── assets/
     └── logos/*.svg        official brand marks, as downloaded
 dist/                      the built artifact — gitignored, never edited
+docs/                      the design records for this page
 site.config.json           the origin the site is served from
+CLAUDE.md                  what an agent reads first: these records and the family rules
 scripts/
 ├── build.mjs              src/ -> dist/
 ├── serve.mjs              serve dist/ for local preview
@@ -100,10 +102,10 @@ scripts/
 `probe.js` keeps the `.js` extension because it is injected into the page and runs
 in the browser; it is not a Node module.
 
-Design records, kept because they explain the code: `design-spec.md` (the content
-brief), `direction-approved.md` (what was chosen, what was inherited from the
-family, and the two things decided here), `brand-spec.md` (which marks are used,
-where they came from, and what was verified against the registries).
+Design records, kept because they explain the code, in `docs/`: `design-spec.md`
+(the content brief), `direction-approved.md` (what was chosen, what was inherited
+from the family, and the two things decided here), `brand-spec.md` (which marks
+are used, where they came from, and what was verified against the registries).
 
 ### What is not here
 
@@ -172,7 +174,7 @@ At eight viewport widths from 1440 down to 360, the verifier checks:
 - that within one parent each language variant appears the **same number of
   times**, so a missing translation cannot hide in one of the four toggle
   combinations. A parent that is legitimately uneven declares `data-uneven`;
-- that no rendered text falls below 12px, the floor `design-spec.md` sets;
+- that no rendered text falls below 12px, the floor `docs/design-spec.md` sets;
 - that no interactive target is under 24px tall (WCAG 2.2 AA, Target Size Minimum);
 - that the built page carries all seven brand symbols and every `<use>` resolves;
 - that every required section id still exists and no in-page link points at
