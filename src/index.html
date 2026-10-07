@@ -153,43 +153,10 @@ content = <span class="k">await</span> storage.<span class="f">read_content</spa
     </aside>
   </section>
 
-  <!-- ══ 01 · scope ═════════════════════════════════════════════════════ -->
-  <section id="scope">
-    <div class="sec-head">
-      <div class="sec-num">01</div>
-      <div>
-        <h2 data-l="en">One contract, and what it will not fake</h2>
-        <h2 data-l="pt">Um contrato, e o que ele não vai fingir</h2>
-        <p data-l="en">Every provider implements the same seventeen asynchronous methods. Where a service genuinely cannot do something, the call says so instead of improvising.</p>
-        <p data-l="pt">Todo provider implementa os mesmos dezessete métodos assíncronos. Onde um serviço realmente não consegue fazer algo, a chamada diz isso em vez de improvisar.</p>
-      </div>
-    </div>
-    <div class="col prose">
-      <ul data-l="en">
-        <li><strong>Nothing is emulated.</strong> <code data-c="py">create_signed_url</code><code data-c="ts">createSignedUrl</code> on the local filesystem raises <code>StorageCapabilityNotSupportedError</code> rather than inventing a URL that would not work.</li>
-        <li><strong>Streams are real streams.</strong> Reads and progressive uploads use the provider's own stream where it has one, so a multi-gigabyte file never has to fit in memory.</li>
-        <li><strong>Provider options never leak.</strong> <code>region</code> belongs to AWS, <code data-c="py">project_id</code><code data-c="ts">projectId</code> to GCP, host and key material to SFTP. The shared contract knows none of them.</li>
-        <li><strong>Injected clients stay yours.</strong> Hand a provider an SDK client you built and <code>close()</code> leaves it alone — the kernel releases only what it created.</li>
-        <li><strong>An empty path means the configured root</strong>, and only on S3, GCP Storage and SFTP. The local filesystem provider rejects it for every operation.</li>
-        <li><strong>A per-call location replaces the client's, whole.</strong> Locations are never merged field by field, so a call that names another bucket cannot silently keep the old prefix.</li>
-      </ul>
-      <ul data-l="pt">
-        <li><strong>Nada é emulado.</strong> <code data-c="py">create_signed_url</code><code data-c="ts">createSignedUrl</code> no filesystem local levanta <code>StorageCapabilityNotSupportedError</code> em vez de inventar uma URL que não funcionaria.</li>
-        <li><strong>Streams são streams de verdade.</strong> Leituras e uploads progressivos usam o stream do próprio provider quando ele tem um, então um arquivo de vários gigabytes nunca precisa caber na memória.</li>
-        <li><strong>Opções de provider não vazam.</strong> <code>region</code> é da AWS, <code data-c="py">project_id</code><code data-c="ts">projectId</code> é do GCP, host e material de chave são do SFTP. O contrato compartilhado não conhece nenhum deles.</li>
-        <li><strong>Clients injetados continuam seus.</strong> Entregue a um provider um client de SDK que você construiu e o <code>close()</code> não encosta nele — o kernel libera apenas o que ele mesmo criou.</li>
-        <li><strong>Um path vazio significa a raiz configurada</strong>, e só no S3, no GCP Storage e no SFTP. O provider de filesystem local o rejeita em toda operação.</li>
-        <li><strong>Uma location por chamada substitui a do client, inteira.</strong> Locations nunca são mescladas campo a campo, então uma chamada que nomeia outro bucket não consegue manter o prefix antigo em silêncio.</li>
-      </ul>
-      <p class="note" data-l="en">Overwrite is on by default and can be turned off per call. The check always runs against the destination, and a blocked write is <code>StoragePathAlreadyExistsError</code>.</p>
-      <p class="note" data-l="pt">Sobrescrever é o padrão e pode ser desligado por chamada. A verificação sempre roda contra o destino, e uma escrita bloqueada é <code>StoragePathAlreadyExistsError</code>.</p>
-    </div>
-  </section>
-
-  <!-- ══ 02 · install ═══════════════════════════════════════════════════ -->
+  <!-- ══ 01 · install ═══════════════════════════════════════════════════ -->
   <section id="install">
     <div class="sec-head">
-      <div class="sec-num">02</div>
+      <div class="sec-num">01</div>
       <div>
         <h2 data-l="en">Install and first write</h2>
         <h2 data-l="pt">Instalação e primeira escrita</h2>
@@ -354,10 +321,10 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     </div>
   </section>
 
-  <!-- ══ 03 · paths ═════════════════════════════════════════════════════ -->
+  <!-- ══ 02 · paths ═════════════════════════════════════════════════════ -->
   <section id="paths">
     <div class="sec-head">
-      <div class="sec-num">03</div>
+      <div class="sec-num">02</div>
       <div>
         <h2 data-l="en">How a path resolves</h2>
         <h2 data-l="pt">Como um caminho é resolvido</h2>
@@ -461,10 +428,10 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     </div>
   </section>
 
-  <!-- ══ 04 · text, bytes and streams ═══════════════════════════════════ -->
+  <!-- ══ 03 · text, bytes and streams ═══════════════════════════════════ -->
   <section id="io">
     <div class="sec-head">
-      <div class="sec-num">04</div>
+      <div class="sec-num">03</div>
       <div>
         <h2 data-l="en">Text, bytes and streams</h2>
         <h2 data-l="pt">Texto, bytes e streams</h2>
@@ -605,10 +572,10 @@ upload = <span class="k">await</span> storage.<span class="f">create_upload_stre
     </div>
   </section>
 
-  <!-- ══ 05 · directories ═══════════════════════════════════════════════ -->
+  <!-- ══ 04 · directories ═══════════════════════════════════════════════ -->
   <section id="directories">
     <div class="sec-head">
-      <div class="sec-num">05</div>
+      <div class="sec-num">04</div>
       <div>
         <h2 data-l="en">Directories and metadata</h2>
         <h2 data-l="pt">Diretórios e metadados</h2>
@@ -702,10 +669,10 @@ info = <span class="k">await</span> storage.<span class="f">get_file_info</span>
     </div>
   </section>
 
-  <!-- ══ 06 · capabilities ══════════════════════════════════════════════ -->
+  <!-- ══ 05 · capabilities ══════════════════════════════════════════════ -->
   <section id="capabilities">
     <div class="sec-head">
-      <div class="sec-num">06</div>
+      <div class="sec-num">05</div>
       <div>
         <h2 data-l="en">What each backend can actually do</h2>
         <h2 data-l="pt">O que cada backend realmente faz</h2>
@@ -819,10 +786,10 @@ signed = <span class="k">await</span> storage.<span class="f">create_signed_url<
     </div>
   </section>
 
-  <!-- ══ 07 · providers ═════════════════════════════════════════════════ -->
+  <!-- ══ 06 · providers ═════════════════════════════════════════════════ -->
   <section id="providers">
     <div class="sec-head">
-      <div class="sec-num">07</div>
+      <div class="sec-num">06</div>
       <div>
         <h2 data-l="en">Four providers, one call</h2>
         <h2 data-l="pt">Quatro providers, uma chamada</h2>
@@ -979,10 +946,10 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     </div>
   </section>
 
-  <!-- ══ 08 · errors ════════════════════════════════════════════════════ -->
+  <!-- ══ 07 · errors ════════════════════════════════════════════════════ -->
   <section id="errors">
     <div class="sec-head">
-      <div class="sec-num">08</div>
+      <div class="sec-num">07</div>
       <div>
         <h2 data-l="en">Errors are part of the contract</h2>
         <h2 data-l="pt">Erros fazem parte do contrato</h2>
@@ -1066,10 +1033,10 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
     </div>
   </section>
 
-  <!-- ══ 09 · observability & extension ═════════════════════════════════ -->
+  <!-- ══ 08 · observability & extension ═════════════════════════════════ -->
   <section id="extend">
     <div class="sec-head">
-      <div class="sec-num">09</div>
+      <div class="sec-num">08</div>
       <div>
         <h2 data-l="en">Observability, and your own backend</h2>
         <h2 data-l="pt">Observabilidade, e seu próprio backend</h2>
@@ -1157,6 +1124,39 @@ storage = <span class="k">await</span> <span class="f">create_storage_client</sp
 <span class="f">defineStorageClientContractTests</span>(<span class="s">'azure-blob'</span>, context);</pre>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ══ 09 · scope ═════════════════════════════════════════════════════ -->
+  <section id="scope">
+    <div class="sec-head">
+      <div class="sec-num">09</div>
+      <div>
+        <h2 data-l="en">One contract, and what it will not fake</h2>
+        <h2 data-l="pt">Um contrato, e o que ele não vai fingir</h2>
+        <p data-l="en">Every provider implements the same seventeen asynchronous methods. Where a service genuinely cannot do something, the call says so instead of improvising.</p>
+        <p data-l="pt">Todo provider implementa os mesmos dezessete métodos assíncronos. Onde um serviço realmente não consegue fazer algo, a chamada diz isso em vez de improvisar.</p>
+      </div>
+    </div>
+    <div class="col prose">
+      <ul data-l="en">
+        <li><strong>Nothing is emulated.</strong> <code data-c="py">create_signed_url</code><code data-c="ts">createSignedUrl</code> on the local filesystem raises <code>StorageCapabilityNotSupportedError</code> rather than inventing a URL that would not work.</li>
+        <li><strong>Streams are real streams.</strong> Reads and progressive uploads use the provider's own stream where it has one, so a multi-gigabyte file never has to fit in memory.</li>
+        <li><strong>Provider options never leak.</strong> <code>region</code> belongs to AWS, <code data-c="py">project_id</code><code data-c="ts">projectId</code> to GCP, host and key material to SFTP. The shared contract knows none of them.</li>
+        <li><strong>Injected clients stay yours.</strong> Hand a provider an SDK client you built and <code>close()</code> leaves it alone — the kernel releases only what it created.</li>
+        <li><strong>An empty path means the configured root</strong>, and only on S3, GCP Storage and SFTP. The local filesystem provider rejects it for every operation.</li>
+        <li><strong>A per-call location replaces the client's, whole.</strong> Locations are never merged field by field, so a call that names another bucket cannot silently keep the old prefix.</li>
+      </ul>
+      <ul data-l="pt">
+        <li><strong>Nada é emulado.</strong> <code data-c="py">create_signed_url</code><code data-c="ts">createSignedUrl</code> no filesystem local levanta <code>StorageCapabilityNotSupportedError</code> em vez de inventar uma URL que não funcionaria.</li>
+        <li><strong>Streams são streams de verdade.</strong> Leituras e uploads progressivos usam o stream do próprio provider quando ele tem um, então um arquivo de vários gigabytes nunca precisa caber na memória.</li>
+        <li><strong>Opções de provider não vazam.</strong> <code>region</code> é da AWS, <code data-c="py">project_id</code><code data-c="ts">projectId</code> é do GCP, host e material de chave são do SFTP. O contrato compartilhado não conhece nenhum deles.</li>
+        <li><strong>Clients injetados continuam seus.</strong> Entregue a um provider um client de SDK que você construiu e o <code>close()</code> não encosta nele — o kernel libera apenas o que ele mesmo criou.</li>
+        <li><strong>Um path vazio significa a raiz configurada</strong>, e só no S3, no GCP Storage e no SFTP. O provider de filesystem local o rejeita em toda operação.</li>
+        <li><strong>Uma location por chamada substitui a do client, inteira.</strong> Locations nunca são mescladas campo a campo, então uma chamada que nomeia outro bucket não consegue manter o prefix antigo em silêncio.</li>
+      </ul>
+      <p class="note" data-l="en">Overwrite is on by default and can be turned off per call. The check always runs against the destination, and a blocked write is <code>StoragePathAlreadyExistsError</code>.</p>
+      <p class="note" data-l="pt">Sobrescrever é o padrão e pode ser desligado por chamada. A verificação sempre roda contra o destino, e uma escrita bloqueada é <code>StoragePathAlreadyExistsError</code>.</p>
     </div>
   </section>
 

@@ -129,8 +129,8 @@ window.__probe = function () {
    * masthead links four of them, and #changelog is the anchor the published
    * package metadata is meant to point at. Renaming one silently breaks whatever
    * points at it, so the set is asserted here. */
-  var REQUIRED_IDS = ['top', 'scope', 'install', 'paths', 'io', 'directories',
-    'capabilities', 'providers', 'errors', 'extend', 'changelog'];
+  var REQUIRED_IDS = ['top', 'install', 'paths', 'io', 'directories',
+    'capabilities', 'providers', 'errors', 'extend', 'scope', 'changelog'];
   out.missingIds = REQUIRED_IDS.filter(function (id) {
     return !document.getElementById(id);
   });

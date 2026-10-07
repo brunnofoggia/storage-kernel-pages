@@ -45,25 +45,27 @@ claim needs the code that proves it, visible without a click.
 
 1. **Hero** — one-sentence purpose, the resolved-path motif, a write and a read,
    links to PyPI / npm.
-2. **01 Scope** — one contract, and what it refuses to fake: no emulation, real
-   streams, provider options that never leak, injected clients that stay the
-   caller's, the empty-path rule, per-call location replacing rather than merging.
-3. **02 Install** — the base, then two provider subtopics (`local-filesystem` and
+2. **01 Install** — the base, then two provider subtopics (`local-filesystem` and
    `aws-s3`), then an honest statement of what the registries actually serve.
-4. **03 Paths** — `bucket`/`directory`, `prefix` and `path`; which provider uses
+3. **02 Paths** — `bucket`/`directory`, `prefix` and `path`; which provider uses
    which; normalization; the local containment check.
-5. **04 Text, bytes and streams** — whole values, then progressive uploads, then
+4. **03 Text, bytes and streams** — whole values, then progressive uploads, then
    the full table of the seventeen methods in six groups.
-6. **05 Directories and metadata** — the two listing defaults, the four
+5. **04 Directories and metadata** — the two listing defaults, the four
    combinations, synthesized directories on object storage, `exists=false`
    rather than an exception.
-7. **06 Capabilities** — the matrix across the four backends. This is the page's
+6. **05 Capabilities** — the matrix across the four backends. This is the page's
    signature block: it is the section no other library's page would carry.
-8. **07 Providers** — the four, their distributions, what they root on;
+7. **06 Providers** — the four, their distributions, what they root on;
    credentials and lifecycle; SFTP host identity as an explicit, opt-in decision.
-9. **08 Errors** — the seven classes, and why only two are normalized.
-10. **09 Observability and your own provider** — fixed event levels, sanitized
-    context, `provider_class` / `providerClass`, the portable contract suite.
+8. **07 Errors** — the seven classes, and why only two are normalized.
+9. **08 Observability and your own provider** — fixed event levels, sanitized
+   context, `provider_class` / `providerClass`, the portable contract suite.
+10. **09 Scope** — one contract, and what it refuses to fake: no emulation, real
+    streams, provider options that never leak, injected clients that stay the
+    caller's, the empty-path rule, per-call location replacing rather than
+    merging. Last before the changelog, per `lib-family/docs/paginas.md` §8.7;
+    until 2026-10-07 it was section 01.
 11. **10 Changelog** — short and factual, and the only place on the page that
     states a version number. It follows the code toggle, because the two
     implementations release independently.
