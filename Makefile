@@ -2,12 +2,13 @@
 # package.json scripts, so CI and a local shell run the same implementation and
 # nothing is reachable only through Make.
 
-.PHONY: help install build verify verify-local shots serve check-all clean
+.PHONY: help install build verify verify-local shots serve dev check-all clean
 
 help:
 	@echo "install       install Node deps and the Chromium Playwright needs"
 	@echo "build         src/ -> dist/"
 	@echo "serve         serve dist/ on :8000"
+	@echo "dev           build, serve and rebuild + reload on every change in src/"
 	@echo "verify        check dist/ at 8 viewport widths (Playwright; the CI gate)"
 	@echo "verify-local  the same checks via Windows Chrome (this WSL box)"
 	@echo "shots         screenshots of dist/ into tmp/final/"
@@ -23,6 +24,9 @@ build:
 
 serve:
 	npm run build && npm run serve
+
+dev:
+	npm run dev
 
 verify:
 	npm run verify

@@ -11,9 +11,12 @@ Live at <https://storage-kernel.foggia.zip>.
 ## Run it
 
 ```bash
-npm run build
-npm run serve      # http://localhost:8000
+npm run dev        # build, serve on http://localhost:8000, rebuild and reload on save
 ```
+
+`npm run serve` serves an existing build without watching (`npm run build` first).
+`npm run dev` adds its reload script to the page as it serves it, never to `dist/`,
+so what it shows is otherwise exactly what deploys.
 
 `dist/index.html` also opens directly over `file://` — the stylesheet, the script
 and the brand marks are all local or inline. Only the web fonts come from the
@@ -84,6 +87,7 @@ CLAUDE.md                  what an agent reads first: these records and the fami
 scripts/
 ├── build.mjs              src/ -> dist/
 ├── serve.mjs              serve dist/ for local preview
+├── dev.mjs                build, serve, rebuild on change in src/, reload the page
 ├── probe.js               the layout checks, injected into the page
 ├── verify.mjs             runs the checks via Playwright (the CI gate)
 ├── verify-local.mjs       runs the same checks via Windows Chrome (this WSL box)
@@ -92,6 +96,7 @@ scripts/
     ├── config.mjs         paths, widths, thresholds, storage keys
     ├── sprite.mjs         folds the logo SVGs into one <symbol> sprite
     ├── site.mjs           reads and validates site.config.json
+    ├── static.mjs         the dist/ file server serve.mjs and dev.mjs share
     ├── report.mjs         turns a probe report into a verdict
     └── win-chrome.mjs     driving the Windows Chrome WSL can reach
 .github/workflows/

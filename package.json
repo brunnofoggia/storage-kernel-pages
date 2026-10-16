@@ -13,7 +13,8 @@
     "verify:local": "node scripts/verify-local.mjs",
     "shots": "node scripts/shots.mjs",
     "check-all": "npm run build && npm run verify",
-    "serve": "node scripts/serve.mjs"
+    "serve": "node scripts/serve.mjs",
+    "dev": "node scripts/dev.mjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"
