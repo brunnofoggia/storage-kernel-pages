@@ -24,7 +24,7 @@ Your code asks for `reports/2026/summary.csv`. Whether that lives on a mounted
 volume, in an S3 bucket, in Google Cloud Storage or on a remote SFTP server does
 not change the call — only which distribution you install.
 
-The interesting claim is not "we do storage". It is that the four backends are
+The interesting claim is not "we do storage". It is that the four providers are
 held to **one contract of seventeen methods**, and that where a service genuinely
 cannot do something the call **raises instead of emulating**. A signed URL on a
 local disk is `StorageCapabilityNotSupportedError`, not a fabricated link. The
@@ -43,32 +43,41 @@ claim needs the code that proves it, visible without a click.
 
 ## 4. Content — sections in order
 
-1. **Hero** — one-sentence purpose, the resolved-path motif, a write and a read,
-   links to PyPI / npm.
-2. **01 Install** — the base, then two provider subtopics (`local-filesystem` and
-   `aws-s3`), then an honest statement of what the registries actually serve.
-3. **02 Paths** — `bucket`/`directory`, `prefix` and `path`; which provider uses
+1. **Hero** — one-sentence purpose, the resolved-path motif, a write and a read
+   imported from the factory, links to PyPI / npm.
+2. **01 Why** — what the contract buys, in six points, beside one sample shown
+   for three providers — `aws-s3`, `gcp-storage`, `local-filesystem` — behind a
+   picker, with the lines that differ marked in the gutter
+   (`lib-family/docs/paginas.md` §8.9). `local-filesystem` stands in for the
+   in-memory provider §8.9 names, because this family has none.
+3. **02 Install** — step 1 installs the factory alone; step 2 is a picker with one
+   pane per provider: its install line, what it roots on, and the same read.
+4. **03 Paths** — `bucket`/`directory`, `prefix` and `path`; which provider uses
    which; normalization; the local containment check.
-4. **03 Text, bytes and streams** — whole values, then progressive uploads, then
+5. **04 Text, bytes and streams** — whole values, then progressive uploads, then
    the full table of the seventeen methods in six groups.
-5. **04 Directories and metadata** — the two listing defaults, the four
+6. **05 Directories and metadata** — the two listing defaults, the four
    combinations, synthesized directories on object storage, `exists=false`
    rather than an exception.
-6. **05 Capabilities** — the matrix across the four backends. This is the page's
+7. **06 Capabilities** — the matrix across the four providers. This is the page's
    signature block: it is the section no other library's page would carry.
-7. **06 Providers** — the four, their distributions, what they root on;
+8. **07 Providers** — the four, their distributions, what they root on;
    credentials and lifecycle; SFTP host identity as an explicit, opt-in decision.
-8. **07 Errors** — the seven classes, and why only two are normalized.
-9. **08 Observability and your own provider** — fixed event levels, sanitized
-   context, `provider_class` / `providerClass`, the portable contract suite.
-10. **09 Scope** — one contract, and what it refuses to fake: no emulation, real
+9. **08 Errors** — the seven classes with their frozen `strg_*` codes, the
+   vendor's code in `provider_code` / `providerCode`, and why only two are
+   normalized.
+10. **09 Observability and your own provider** — fixed log levels, one sanitized
+    line per operation, `provider_class` / `providerClass`, the portable contract
+    suite.
+11. **10 Scope** — one contract, and what it refuses to fake: no emulation, real
     streams, provider options that never leak, injected clients that stay the
     caller's, the empty-path rule, per-call location replacing rather than
     merging. Last before the changelog, per `lib-family/docs/paginas.md` §8.7;
     until 2026-10-07 it was section 01.
-11. **10 Changelog** — short and factual, and the only place on the page that
+12. **11 Changelog** — short and factual, and the only place on the page that
     states a version number. It follows the code toggle, because the two
-    implementations release independently.
+    implementations release independently. A tagged version the registry does
+    not serve is marked as such (`paginas.md` §8.1).
 12. **Footer** — registry links, license MIT.
 
 ## 5. Two toggles, both persistent
@@ -81,7 +90,10 @@ claim needs the code that proves it, visible without a click.
   smoothed over — Python takes frozen dataclasses and `snake_case`, TypeScript
   takes object literals and `camelCase`, and both `create_storage_client` and
   `createStorageClient` are asynchronous.
-- **Language of the prose**: EN ↔ PT-BR.
+- **Language of the prose**: EN ↔ PT-BR. In Portuguese a provider is an
+  **armazenamento** in prose, every time (`paginas.md` §8.11); the identifier in
+  code stays `provider_name` / `providerName`, and the first mention bridges the
+  two.
 
 Both in vanilla JS, remembered in `localStorage`, overridable from the URL with
 `?code=` and `?lang=`. Default: EN + Python.
@@ -105,12 +117,14 @@ interactive targets ≥ 24px.
   `0.1.0a` and the page says so.
 - No emoji as icons. Brand marks (Python, TypeScript, AWS, Google Cloud, npm,
   PyPI, GitHub) must be the real official SVGs, inline, recolored via
-  `currentColor`. Backends with no brand mark — the local filesystem and SFTP —
+  `currentColor`. Providers with no brand mark — the local filesystem and SFTP —
   take a typographic bullet rather than an invented logo.
-- **The install lines must not outrun the registries.** At the time of writing,
-  PyPI serves only the three base distributions and npm serves nothing. The page
-  states that where a reader will hit it, in the install section, rather than
-  letting them discover it at a failing command.
+- **Publication is stated once, in the changelog.** The page runs ahead of the
+  registries until the tag is published, so it carries no notice block about
+  them: a tagged version the registry does not serve is marked "not on PyPI
+  yet" / "not on npm yet" in the changelog, and that marker is the only place
+  that says it (`lib-family/docs/paginas.md` §8.1). Until 2026-10-13 the install
+  section carried such a notice; the family rule removed it.
 
 ## 8. Visual motif — the seed for form
 
@@ -122,6 +136,6 @@ are this page's own:
   `app-files/reports/2026/summary.csv`. One string built from a root, an optional
   namespace and what the call asked for. The provider maps it to whatever its
   service calls a place, and that mapping is the contract.
-- **The capability matrix.** Four backends against eight capabilities, with the
+- **The capability matrix.** Four providers against eight capabilities, with the
   gaps shown rather than hidden. It is the visual argument for the section 2
   claim: the differences sit *in* the contract, not behind it.

@@ -126,10 +126,10 @@ window.__probe = function () {
   out.pairGaps = gaps.slice(0, 8);
 
   /* Section ids are external URL targets, not just internal anchors: the
-   * masthead links four of them, and #changelog is the anchor the published
+   * masthead links six of them, and #changelog is the anchor the published
    * package metadata is meant to point at. Renaming one silently breaks whatever
    * points at it, so the set is asserted here. */
-  var REQUIRED_IDS = ['top', 'install', 'paths', 'io', 'directories',
+  var REQUIRED_IDS = ['top', 'why', 'install', 'paths', 'io', 'directories',
     'capabilities', 'providers', 'errors', 'extend', 'scope', 'changelog'];
   out.missingIds = REQUIRED_IDS.filter(function (id) {
     return !document.getElementById(id);

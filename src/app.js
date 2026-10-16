@@ -1,9 +1,10 @@
 /* Storage Kernel — page behaviour.
  *
- * Four small things, no framework: the two toggles, their persistence, a copy
- * button per code block, and nav highlighting. The toggles themselves are pure
- * CSS (see styles.css); this only flips an attribute on <html>, so the page is
- * fully readable with JavaScript disabled — it simply stays on the defaults.
+ * Five small things, no framework: the two toggles, their persistence, the
+ * provider panes, a copy button per code block, and nav highlighting. The
+ * toggles themselves are pure CSS (see styles.css); this only flips an attribute
+ * on <html>, so the page is fully readable with JavaScript disabled — it simply
+ * stays on the defaults.
  *
  * Both toggles can be set from the URL: ?code=py|ts and ?lang=en|pt. That exists
  * because the published package metadata links here, and a reader arriving from
@@ -99,6 +100,26 @@
         break;
       }
     }
+  });
+
+  /* ── panes ─────────────────────────────────────────────────────────────
+   * Local to the block and not remembered: a pane shows one provider, not a
+   * preference. Without JavaScript the block stays on the pane marked .on.
+   */
+  document.querySelectorAll('[data-panes]').forEach(function (block) {
+    var buttons = block.querySelectorAll('[data-show-pane]');
+    var panes = block.querySelectorAll('[data-pane]');
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        var name = button.getAttribute('data-show-pane');
+        panes.forEach(function (pane) {
+          pane.classList.toggle('on', pane.getAttribute('data-pane') === name);
+        });
+        buttons.forEach(function (b) {
+          b.setAttribute('aria-pressed', String(b === button));
+        });
+      });
+    });
   });
 
   /* ── copy buttons ──────────────────────────────────────────────────────

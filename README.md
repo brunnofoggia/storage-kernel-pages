@@ -77,7 +77,7 @@ ever serve it from a subpath such as `<user>.github.io/storage-kernel-pages/`.
 src/                       hand-authored, the only thing you edit
 ├── index.html             the page, with placeholders for sprite and canonical
 ├── styles.css             tokens, layout, responsive rules
-├── app.js                 the two toggles, copy buttons, nav highlighting
+├── app.js                 the two toggles, the provider panes, copy buttons, nav highlighting
 └── assets/
     └── logos/*.svg        official brand marks, as downloaded
 dist/                      the built artifact — gitignored, never edited
@@ -256,22 +256,25 @@ The libraries are at `0.1.0a` and the page says so.
 
 ## What the page says about publication
 
-Checked against the registries on 2026-08-28, not against the repositories,
-because a tag is not a release:
+Checked against the registries' JSON APIs on 2026-10-14, not against the
+repositories, because a tag is not a release:
 
-- **PyPI** serves `storage-kernel-contracts`, `storage-kernel-core` and
-  `storage-kernel-factory` at `0.1.0a1`. The four provider distributions and
-  `storage-kernel-testing` are **not** published.
-- **npm** serves nothing under `@storage-kernel`.
+- **PyPI** serves all eight `storage-kernel-*` distributions at `0.1.0a4`, the
+  latest tag; seven also carry `0.1.0a1`. `a2` and `a3` were never published.
+- **npm** serves all eight `@storage-kernel/*` packages at `0.1.0-alpha.4`, the
+  latest tag and the first one published, with `latest` and `alpha` both
+  pointing at it.
 - Both library repositories are **private**, so links into them 404 for the
   public. Every GitHub link is commented out in `src/index.html` — in the hero,
   the whole footer Documentation column, and the per-language entries — ready to
   uncomment when that changes.
 
-The install section carries a notice saying exactly this, so a reader meets the
-gap next to the command rather than at a failing `uv add`. Three things change
-when the release completes: that notice, the "not on npm yet" markers, and the
-changelog entries.
+The page carries no notice about the registries (`lib-family/docs/paginas.md`
+§8.1). The changelog marks each tagged version the registry does not serve, and
+that is the only place that says it. When a later tag is published, the
+unpublished entries before it leave the page and what they changed folds into
+the published one. With `a4` and `alpha.4` published, the changelog carries no
+marker today.
 
 ## Palette
 

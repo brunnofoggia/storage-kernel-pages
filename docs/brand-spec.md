@@ -18,7 +18,7 @@ is stripped of nothing but its hardcoded `fill`, so the page can recolour it wit
 | Python | the Python implementation and code toggle | Simple Icons CDN | `src/assets/logos/python.svg` |
 | TypeScript | the TypeScript implementation and code toggle | Simple Icons CDN | `src/assets/logos/typescript.svg` |
 | PyPI | where `storage-kernel-*` is published | Simple Icons CDN | `src/assets/logos/pypi.svg` |
-| npm | where `@storage-kernel/*` is **not yet** published | Simple Icons CDN | `src/assets/logos/npm.svg` |
+| npm | where `@storage-kernel/*` is published | Simple Icons CDN | `src/assets/logos/npm.svg` |
 | GitHub | source links, currently commented out | Simple Icons CDN | `src/assets/logos/github.svg` |
 
 `scripts/lib/sprite.mjs` folds all seven into one inline `<symbol>` sprite, which
@@ -37,26 +37,27 @@ providers.
 
 ## Facts the page asserts
 
-Verified on 2026-08-28 against the registries, **not** the repositories, because a
-tag is not a release:
+Verified on 2026-10-14 against the registries' JSON APIs, **not** the
+repositories, because a tag is not a release:
 
-- `storage-kernel-py` — eight distributions, tagged `v0.1.0a1`. PyPI serves three
-  of them: `storage-kernel-contracts`, `storage-kernel-core` and
-  `storage-kernel-factory`, all at `0.1.0a1`, uploaded 2026-08-27. The four
-  provider distributions and `storage-kernel-testing` are **not** on PyPI.
-- `storage-kernel-js` — eight packages, tagged `v0.1.0-alpha.1`. **Nothing** is on
-  npm; the `@storage-kernel` scope resolves to nothing.
+- `storage-kernel-py` — eight distributions, tagged `v0.1.0a1` to `v0.1.0a4`. PyPI
+  serves all eight at `0.1.0a4`, and the seven that existed then at `0.1.0a1`.
+  `a2` and `a3` were never published.
+- `storage-kernel-js` — eight packages, tagged `v0.1.0-alpha.1` to
+  `v0.1.0-alpha.4`. npm serves all eight at `0.1.0-alpha.4`, the first version
+  published under `@storage-kernel`.
 - Both GitHub repositories are private, so every link into them 404s for the
   public. The links are therefore commented out in `src/index.html` rather than
   deleted, ready to restore when that changes.
 - Providers: `local-filesystem`, `aws-s3`, `gcp-storage`, `sftp`.
 - Seventeen client methods; five writable-stream methods.
-- Python 3.12+; the TypeScript packages target Node 22+.
+- Python 3.12+; the TypeScript packages require Node 22.13+.
 
-The page states the registry gap where a reader will hit it — in the install
-section, next to the commands that do not work yet — rather than letting them find
-out at a failing `uv add`. Versions are stated in one place, the changelog, so
-this file does not repeat them per release.
+The page says what the registries serve only in the changelog, where a tagged
+version the registry does not serve carries a "not on PyPI yet" / "not on npm
+yet" marker (`lib-family/docs/paginas.md` §8.1) — there is no notice block. With
+the latest tags published, no entry carries one today. Versions are stated in
+one place, the changelog, so this file does not repeat them per release.
 
 No download count, star count, adoption claim, testimonial or benchmark appears on
 the site, because none of those exist for a `0.1.0a` library.

@@ -58,11 +58,19 @@ Two things this page needed that the family brief did not settle:
 1. **A caution colour.** In A2 the warning badge could borrow the palette's amber,
    because the accent was a cool sky. Here the accent *is* amber, so a badge in it
    would read as emphasis rather than caution. `--warn` is therefore a muted rose
-   `#E39AA0` — 8.43:1 on the ground — used only by the "not on npm yet" markers
-   and the availability notice.
+   `#E39AA0` — 8.43:1 on the ground — used only by the "not on PyPI yet" and
+   "not on npm yet" markers in the changelog.
 
-2. **Marks for the two backends that have none.** AWS and Google Cloud have
+2. **Marks for the two providers that have none.** AWS and Google Cloud have
    official brand marks and use them. The local filesystem and SFTP do not — SFTP
    is a protocol and a local disk is not a vendor — so both take the typographic
    bullet the family already uses for non-branded providers, rather than an
    invented logo that would imply an owner.
+
+3. **A blue for the gutter marks.** The family's compare blocks mark the lines
+   that differ between samples green (swap), red (only in this one) and blue
+   (comment), and in A2 the blue is the accent itself. Here the accent is brass,
+   so the blue is chosen: `--mark-info` `#79B8F0`. Against the code ground
+   `--ink-sunk` `#070D18` the three measure green `#6CC884` 9.48:1, red `#E8857F`
+   7.49:1 and blue 9.19:1, all above the 3:1 that `paginas.md` §8.9 asks of a
+   non-text mark.
